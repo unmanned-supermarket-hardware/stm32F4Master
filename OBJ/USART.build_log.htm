@@ -26,22 +26,32 @@ Project File Date:  07/10/2019
 
 <h2>Output:</h2>
 Build target 'USART'
-compiling main.c...
-main.c(26): warning:  #223-D: function "uart2_init" declared implicitly
-        uart2_init(115200);
-main.c(27): warning:  #223-D: function "uart3_init" declared implicitly
-        uart3_init(115200);
-main.c(20): warning:  #177-D: variable "t" was declared but never referenced
-        u8 t;
-main.c(21): warning:  #177-D: variable "len" was declared but never referenced
-        u8 len; 
-main.c(22): warning:  #177-D: variable "times" was declared but never referenced
-        u16 times=0;  
-main.c: 5 warnings, 0 errors
+compiling aiwacMaster.c...
+..\AIWAC\aiwacMaster.c(31): warning:  #167-D: argument of type "u8 *" is incompatible with parameter of type "const char *"
+        root = cJSON_Parse(USART2_jsonParseBuF);
+..\AIWAC\aiwacMaster.c(76): warning:  #167-D: argument of type "u8 *" is incompatible with parameter of type "const char *"
+        root = cJSON_Parse(USART3_jsonParseBuF);
+..\AIWAC\aiwacMaster.c(134): warning:  #223-D: function "memset" declared implicitly
+        memset(usartData, 0, sizeof(usartData));
+..\AIWAC\aiwacMaster.c(151): warning:  #223-D: function "strcpy" declared implicitly
+        strcpy(str,out);
+..\AIWAC\aiwacMaster.c(153): warning:  #223-D: function "strlen" declared implicitly
+        len = strlen(str);
+..\AIWAC\aiwacMaster.c(161): warning:  #223-D: function "strcat" declared implicitly
+        strcat(usartData, str);
+..\AIWAC\aiwacMaster.c(186): warning:  #223-D: function "memset" declared implicitly
+        memset(usartData, 0, sizeof(usartData));
+..\AIWAC\aiwacMaster.c(203): warning:  #223-D: function "strcpy" declared implicitly
+        strcpy(str,out);
+..\AIWAC\aiwacMaster.c(205): warning:  #223-D: function "strlen" declared implicitly
+        len = strlen(str);
+..\AIWAC\aiwacMaster.c(213): warning:  #223-D: function "strcat" declared implicitly
+        strcat(usartData, str);
+..\AIWAC\aiwacMaster.c: 10 warnings, 0 errors
 linking...
-Program Size: Code=3548 RO-data=424 RW-data=36 ZI-data=3436  
+Program Size: Code=22054 RO-data=1082 RW-data=112 ZI-data=24840  
 FromELF: creating hex file...
-"..\OBJ\USART.axf" - 0 Error(s), 5 Warning(s).
+"..\OBJ\USART.axf" - 0 Error(s), 10 Warning(s).
 
 <h2>Collection of Component include folders:</h2>
   D:\TY\无人超市\主控工程\USER\RTE
