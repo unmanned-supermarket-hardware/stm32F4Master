@@ -24,8 +24,8 @@ int main(void)
 	delay_init(168);		//延时初始化 
 	
 	uart_init(115200);	//串口初始化波特率为115200
-	uart2_init(115200);
-	uart3_init(115200);
+	uart2_init(115200); // car1
+	uart3_init(115200);  //car2
 	
 	LED_Init();		  		//初始化与LED连接的硬件接口  
 	USART2_jsonParseBuF[0] = '-';
