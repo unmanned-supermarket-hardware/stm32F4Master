@@ -125,18 +125,17 @@ double myabs_double(double a)
 **************************************************************************/
 void AiwacMasterSendOrderCar1(double X_V, int moveState)
 {
+	u16 jsonSize;
 	cJSON *root;
-	char *out;
-	int len = 0;
-	char str[300];
+	char *strJson;
+	char strSend[1000];
 	
-	char usartData[300];
-	memset(usartData, 0, sizeof(usartData));
+	strSend[0] = '#';
+	strSend[1] = '!';
 
-	usartData[0] = '#';
-	usartData[1] = '!';
 
 	root=cJSON_CreateObject();
+
 
 	cJSON_AddNumberToObject(root,"from", 3);
 	cJSON_AddNumberToObject(root,"to", 2);
@@ -145,26 +144,20 @@ void AiwacMasterSendOrderCar1(double X_V, int moveState)
 	cJSON_AddNumberToObject(root,"moveState", moveState);
 
 
-	out=cJSON_Print(root); 
+	strJson=cJSON_Print(root); 
 	cJSON_Delete(root); 
-
-	strcpy(str,out);
-	//printf("%s\n",out); 
-	len = strlen(str);
 	
-	usartData[2] = (u8)(len/256);
+	jsonSize = strlen(strJson);
 
-	//printf("\r\nusartData[2]:%d",usartData[2]);
-	
-	usartData[3] = (u8)(len%256);
-	//printf("\r\nusartData[3]:%d",usartData[3]);
-	strcat(usartData, str);
-	//printf("\r\n  2Master  jsonLen:%d,usatLen:%d,usartData:%s,json:%s",strlen(str),usartData[2]*256+usartData[3],usartData,out);
+	strSend[2] = jsonSize >> 8;
+	strSend[3] = jsonSize;
 
-	
-// 需要打开
-	usart2_sendString(usartData, strlen(usartData));
-	myfree(out);
+	strncpy(strSend+4,strJson,jsonSize);
+
+	// 需要打开
+	usart2_sendString(strSend,4 + jsonSize);
+	myfree(strJson);
+
 
 }
 
@@ -177,46 +170,38 @@ void AiwacMasterSendOrderCar1(double X_V, int moveState)
 **************************************************************************/
 void AiwacMasterSendOrderCar2(double X_V, int moveState)
 {
-	cJSON *root;
-	char *out;
-	int len = 0;
-	char str[300];
+	u16 jsonSize;
+		cJSON *root;
+		char *strJson;
+		char strSend[1000];
+		
+		strSend[0] = '#';
+		strSend[1] = '!';
 	
-	char usartData[300];
-	memset(usartData, 0, sizeof(usartData));
-
-	usartData[0] = '#';
-	usartData[1] = '!';
-
-	root=cJSON_CreateObject();
-
-	cJSON_AddNumberToObject(root,"from", 3);
-	cJSON_AddNumberToObject(root,"to", 2);
-	cJSON_AddNumberToObject(root,"msType", 1);
-	cJSON_AddNumberToObject(root,"X_V", X_V);
-	cJSON_AddNumberToObject(root,"moveState", moveState);
-
-
-	out=cJSON_Print(root); 
-	cJSON_Delete(root); 
-
-	strcpy(str,out);
-	//printf("%s\n",out); 
-	len = strlen(str);
 	
-	usartData[2] = (u8)(len/256);
-
-	//printf("\r\nusartData[2]:%d",usartData[2]);
+		root=cJSON_CreateObject();
 	
-	usartData[3] = (u8)(len%256);
-	//printf("\r\nusartData[3]:%d",usartData[3]);
-	strcat(usartData, str);
-	//printf("\r\n	2Master  jsonLen:%d,usatLen:%d,usartData:%s,json:%s",strlen(str),usartData[2]*256+usartData[3],usartData,out);
-
 	
-// 需要打开
-	usart3_sendString(usartData, strlen(usartData));
-	myfree(out);
+		cJSON_AddNumberToObject(root,"from", 3);
+		cJSON_AddNumberToObject(root,"to", 2);
+		cJSON_AddNumberToObject(root,"msType", 1);
+		cJSON_AddNumberToObject(root,"X_V", X_V);
+		cJSON_AddNumberToObject(root,"moveState", moveState);
+	
+	
+		strJson=cJSON_Print(root); 
+		cJSON_Delete(root); 
+		
+		jsonSize = strlen(strJson);
+	
+		strSend[2] = jsonSize >> 8;
+		strSend[3] = jsonSize;
+	
+		strncpy(strSend+4,strJson,jsonSize);
+	
+		// 需要打开
+		usart3_sendString(strSend,4 + jsonSize);
+		myfree(strJson);
 
 
 }

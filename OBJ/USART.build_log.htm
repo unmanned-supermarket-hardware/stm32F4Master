@@ -26,30 +26,32 @@ Project File Date:  07/10/2019
 
 <h2>Output:</h2>
 Build target 'USART'
+compiling usart.c...
+..\SYSTEM\usart\usart.c(226): warning:  #223-D: function "memset" declared implicitly
+        memset(USART2_jsonBuF, 0, sizeof(USART2_jsonBuF));
+..\SYSTEM\usart\usart.c(280): warning:  #223-D: function "strcpy" declared implicitly
+                                strcpy(USART2_jsonParseBuF,USART2_jsonBuF);
+..\SYSTEM\usart\usart.c(391): warning:  #223-D: function "memset" declared implicitly
+        memset(USART3_jsonBuF, 0, sizeof(USART3_jsonBuF));
+..\SYSTEM\usart\usart.c(444): warning:  #223-D: function "strcpy" declared implicitly
+                                strcpy(USART3_jsonParseBuF, USART3_jsonBuF);
+..\SYSTEM\usart\usart.c: 4 warnings, 0 errors
 compiling aiwacMaster.c...
 ..\AIWAC\aiwacMaster.c(31): warning:  #167-D: argument of type "u8 *" is incompatible with parameter of type "const char *"
         root = cJSON_Parse(USART2_jsonParseBuF);
 ..\AIWAC\aiwacMaster.c(76): warning:  #167-D: argument of type "u8 *" is incompatible with parameter of type "const char *"
         root = cJSON_Parse(USART3_jsonParseBuF);
-..\AIWAC\aiwacMaster.c(134): warning:  #223-D: function "memset" declared implicitly
-        memset(usartData, 0, sizeof(usartData));
-..\AIWAC\aiwacMaster.c(151): warning:  #223-D: function "strcpy" declared implicitly
-        strcpy(str,out);
-..\AIWAC\aiwacMaster.c(153): warning:  #223-D: function "strlen" declared implicitly
-        len = strlen(str);
-..\AIWAC\aiwacMaster.c(161): warning:  #223-D: function "strcat" declared implicitly
-        strcat(usartData, str);
-..\AIWAC\aiwacMaster.c(186): warning:  #223-D: function "memset" declared implicitly
-        memset(usartData, 0, sizeof(usartData));
-..\AIWAC\aiwacMaster.c(203): warning:  #223-D: function "strcpy" declared implicitly
-        strcpy(str,out);
-..\AIWAC\aiwacMaster.c(205): warning:  #223-D: function "strlen" declared implicitly
-        len = strlen(str);
-..\AIWAC\aiwacMaster.c(213): warning:  #223-D: function "strcat" declared implicitly
-        strcat(usartData, str);
-..\AIWAC\aiwacMaster.c: 10 warnings, 0 errors
+..\AIWAC\aiwacMaster.c(150): warning:  #223-D: function "strlen" declared implicitly
+        jsonSize = strlen(strJson);
+..\AIWAC\aiwacMaster.c(155): warning:  #223-D: function "strncpy" declared implicitly
+        strncpy(strSend+4,strJson,jsonSize);
+..\AIWAC\aiwacMaster.c(195): warning:  #223-D: function "strlen" declared implicitly
+                jsonSize = strlen(strJson);
+..\AIWAC\aiwacMaster.c(200): warning:  #223-D: function "strncpy" declared implicitly
+                strncpy(strSend+4,strJson,jsonSize);
+..\AIWAC\aiwacMaster.c: 6 warnings, 0 errors
 linking...
-Program Size: Code=22054 RO-data=1082 RW-data=112 ZI-data=24840  
+Program Size: Code=22174 RO-data=1082 RW-data=120 ZI-data=24840  
 FromELF: creating hex file...
 "..\OBJ\USART.axf" - 0 Error(s), 10 Warning(s).
 
