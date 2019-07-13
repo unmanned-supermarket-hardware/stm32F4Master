@@ -137,7 +137,7 @@ void AiwacMasterSendOrderCar1(double X_V, int moveState)
 	u16 jsonSize;
 	cJSON *root;
 	char *strJson;
-	char strSend[1000];
+	char strSend[300];
 	
 	strSend[0] = '#';
 	strSend[1] = '!';
@@ -182,7 +182,7 @@ void AiwacMasterSendOrderCar2(double X_V, int moveState)
 	u16 jsonSize;
 		cJSON *root;
 		char *strJson;
-		char strSend[1000];
+		char strSend[300];
 		
 		strSend[0] = '#';
 		strSend[1] = '!';

@@ -365,7 +365,7 @@
               <MiscControls></MiscControls>
               <Define>STM32F40_41xxx,USE_STDPERIPH_DRIVER</Define>
               <Undefine></Undefine>
-              <IncludePath>..\CORE;..\SYSTEM\delay;..\SYSTEM\sys;..\SYSTEM\usart;..\FWLIB\STM32F4xx_StdPeriph_Driver\inc;..\USER;..\HARDWARE\LED;..\HARDWARE\BEEP;..\HARDWARE\KEY;..\FWLIB\inc</IncludePath>
+              <IncludePath>..\CORE;..\SYSTEM\delay;..\SYSTEM\sys;..\SYSTEM\usart;..\FWLIB\STM32F4xx_StdPeriph_Driver\inc;..\USER;..\HARDWARE\LED;..\HARDWARE\BEEP;..\HARDWARE\KEY;..\FWLIB\inc;..\Malloc;..\cJSON;..\AIWAC</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -517,6 +517,36 @@
         </Group>
         <Group>
           <GroupName>New Group</GroupName>
+        </Group>
+        <Group>
+          <GroupName>JSON</GroupName>
+          <Files>
+            <File>
+              <FileName>cJSON.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\cJSON\cJSON.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>MALLOC</GroupName>
+          <Files>
+            <File>
+              <FileName>malloc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Malloc\malloc.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>AIWAC</GroupName>
+          <Files>
+            <File>
+              <FileName>aiwacMaster.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\AIWAC\aiwacMaster.c</FilePath>
+            </File>
+          </Files>
         </Group>
       </Groups>
     </Target>

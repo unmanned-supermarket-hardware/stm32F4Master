@@ -34,12 +34,12 @@ int main(void)
 	
 	while(1)
 	{
-		delay_ms(10); 
+		delay_ms(50); 
 		
 		// 解析 两小车的数据
 		PaserCar2_State();
 		PaserCar1_State();
-		
+		printf("\r\n Car1_moveState:%d",Car1_moveState);
 		Aiwac2CARTeamwork();
 	
 	}

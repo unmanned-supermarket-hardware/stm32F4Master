@@ -253,7 +253,7 @@ void USART2_IRQHandler(void)                	//串口2中断服务程序
 				USART2_startGetMS = 1;// 协议标志 前两字节 接收ok	
 				uart2GetLen++;
 			}
-			else if (USART2_startMS == '#')// 不满足  协议，重新  接收
+			else if ((temp != '!')  && (USART2_startMS == '#')  && (uart2GetLen == 1)) // 不满足  协议，重新  接收
 			{
 				USART2StateTo0();
 
