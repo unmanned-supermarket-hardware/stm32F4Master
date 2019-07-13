@@ -34,6 +34,7 @@ void PaserCar1_State(void)
 	if (!orderValue) {
 	    //printf("get name faild !\n");
 	    //printf("Error before: [%s]\n", cJSON_GetErrorPtr());
+	    goto end;
 	}
 	Car1_CorrectState = orderValue->valueint;  //自校准情况 
 
@@ -42,6 +43,7 @@ void PaserCar1_State(void)
 	if (!orderValue) {
 	   // printf("get name faild !\n");
 	   // printf("Error before: [%s]\n", cJSON_GetErrorPtr());
+	   goto end;
 	}
 	Car1_FDistance = orderValue->valuedouble;  // 前方距离
 
@@ -50,9 +52,11 @@ void PaserCar1_State(void)
 	if (!orderValue) {
 	   // printf("get name faild !\n");
 	   // printf("Error before: [%s]\n", cJSON_GetErrorPtr());
+	   goto end;
 	}
 	Car1_moveState = orderValue->valueint;  // 小车的运动状态指令
 
+end :
 	cJSON_Delete(root);
 
 
@@ -79,6 +83,7 @@ void PaserCar2_State(void)
 	if (!orderValue) {
 	    //printf("get name faild !\n");
 	    //printf("Error before: [%s]\n", cJSON_GetErrorPtr());
+	    goto end;
 	}
 	Car2_CorrectState = orderValue->valueint;  //自校准情况 
 
@@ -87,6 +92,7 @@ void PaserCar2_State(void)
 	if (!orderValue) {
 	   // printf("get name faild !\n");
 	   // printf("Error before: [%s]\n", cJSON_GetErrorPtr());
+	   goto end;
 	}
 	Car2_FDistance = orderValue->valuedouble;  // 前方距离
 
@@ -95,9 +101,12 @@ void PaserCar2_State(void)
 	if (!orderValue) {
 	   // printf("get name faild !\n");
 	   // printf("Error before: [%s]\n", cJSON_GetErrorPtr());
+	   goto end;
 	}
 	Car2_moveState = orderValue->valueint;  // 小车的运动状态指令
 
+
+end:
 	cJSON_Delete(root);
 
 
