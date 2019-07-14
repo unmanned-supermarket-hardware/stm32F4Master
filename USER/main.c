@@ -39,7 +39,11 @@ int main(void)
 		// 解析 两小车的数据
 		PaserCar2_State();
 		PaserCar1_State();
-		printf("\r\n Car1_moveState:%d",Car1_moveState);
+
+		
+		printf("\r\n Car1:Car1_CorrectState :%d,  Car1_FDistance:%f,   Car1_moveState:%d",Car1_CorrectState ,Car1_FDistance, Car1_moveState);
+		printf("\r\n Car2:Car2_CorrectState :%d,  Car2_FDistance:%f,   Car2_moveState:%d",Car2_CorrectState ,Car2_FDistance, Car2_moveState);
+
 		Aiwac2CARTeamwork();
 	
 	}

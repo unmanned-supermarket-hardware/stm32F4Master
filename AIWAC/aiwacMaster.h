@@ -4,9 +4,10 @@
 #include "malloc.h"
 #include "cJSON.h"
 
-#define TURING_DISTANCE 500  // 前方需要转弯的  时候 mm
-#define FRONT_DISTANCEGAP  20  //  两车  前后 距离差 mm
+#define TURING_DISTANCE 0.5  // 前方需要转弯的  时候 m
+#define FRONT_DISTANCEGAP  0.02  //  两车  前后 距离差 m
 #define DEFUALT_SPEED 100  //  小车的默认速度
+#define MIN_SPEED 30  //小车 运动的最小速度
 #define ACC_SPEED 150  //  小车的加速速度
 #define CAR_STOP 0  // 小车速度停止
 
@@ -19,13 +20,13 @@
 
 
 extern int Car1_CorrectState ;
-extern int Car1_FDistance ;
+extern double Car1_FDistance ;
 extern int Car1_moveState ;
 
 
 
 extern int Car2_CorrectState ;
-extern int Car2_FDistance ;
+extern double Car2_FDistance ;
 extern int Car2_moveState;
 
 
@@ -35,6 +36,8 @@ double myabs_double(double a);
 void AiwacMasterSendOrderCar1(double X_V, int moveState);
 void AiwacMasterSendOrderCar2(double X_V, int moveState);
 void Aiwac2CARTeamwork(void);
+double  designFSpeed(double FD);
+
 
 #endif
 
