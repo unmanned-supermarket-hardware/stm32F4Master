@@ -229,7 +229,15 @@ void Aiwac2CARTeamwork(void)
 		return;
 	}
 
+	if ((Car1_moveState == STATE_STOP) && (Car1_moveState == STATE_STOP)) // 两车 刚上电 、刚入弯道、刚出弯道
+	{
+		if (  (Car1_CorrectState  == 0)|| ( Car2_CorrectState == 0) )//姿态未校准
+		{
+			printf("\r\nwaiting  for correction");
+			return ;
+		}
 
+	}
 
 
 	
@@ -239,87 +247,89 @@ void Aiwac2CARTeamwork(void)
 		return; //   等待转完
 	}
 
-	if(  (Car1_CorrectState  == 0)|| ( Car2_CorrectState == 0) )// 姿态未矫正
-	{
 
+
+
+	if ((Car1_FDistance <0.1 ) || (Car2_FDistance <= 0.1 ))  // 前方值 异常
+	{
+		printf("\r\n  FD error,Car1_FDistance:%f,  Car2_FDistance:%f",Car1_FDistance,Car2_FDistance);
+
+		//前方距离不对，停止
 		AiwacMasterSendOrderCar1(CAR_STOP , STATE_STOP) ;
 		AiwacMasterSendOrderCar2(CAR_STOP , STATE_STOP) ;
-		printf("\r\nwaiting  for correction");
-		return;  //等待姿态矫正
-
+		return ;
 	}
-	else  // 姿态 矫正ok
+
+	
+	if((Car1_FDistance <= TURING_DISTANCE ) || (Car2_FDistance <= TURING_DISTANCE )) // 有到达转弯点
 	{
-
-
-		if ((Car1_FDistance <0.08 ) || (Car2_FDistance <= 0.08 ))  // 前方值 异常
-		{
-			printf("\r\n  FD error,Car1_FDistance:%f,  Car2_FDistance:%f",Car1_FDistance,Car2_FDistance);
-			return ;
-		}
-
 		
-		if((Car1_FDistance <= TURING_DISTANCE ) || (Car2_FDistance <= TURING_DISTANCE )) // 有到达转弯点
+		if ((Car1_FDistance <= TURING_DISTANCE ) && (Car2_FDistance <= TURING_DISTANCE )) // 都到达转弯点
 		{
-			
-			if ((Car1_FDistance <= TURING_DISTANCE ) && (Car2_FDistance <= TURING_DISTANCE )) // 都到达转弯点
-			{
-
-				//  转弯的  方向 要看 在 超市哪边
-				AiwacMasterSendOrderCar1(CAR_STOP , STATE_TURN_RIGHT) ;
-				AiwacMasterSendOrderCar2(CAR_STOP , STATE_TURN_RIGHT) ;
-				printf("\r\nturing");
-			}
+			if ( (Car1_CorrectState  == 0)|| ( Car2_CorrectState == 0) ) // 姿态不对
+				{
+					printf("\r\nwaiting  for correction");
+					return ;
+				}
 			else
+				{
+					//	转弯的  方向 要看 在 超市哪边
+					AiwacMasterSendOrderCar1(CAR_STOP , STATE_TURN_RIGHT) ;
+					AiwacMasterSendOrderCar2(CAR_STOP , STATE_TURN_RIGHT) ;
+					printf("\r\nturing");
+
+				}
+
+		}
+		else
+		{
+			if (Car1_FDistance <= TURING_DISTANCE)
+				{
+					//车1  停止，车2 继续
+					AiwacMasterSendOrderCar1(CAR_STOP , STATE_STOP) ;
+					AiwacMasterSendOrderCar2(MIN_SPEED , STATE_STRAIGHT) ;
+					printf("\r\ncar1 stop, car2 go on");
+				}
+			else
+				{
+					//车2	停止，车1 继续
+					AiwacMasterSendOrderCar1(MIN_SPEED , STATE_STRAIGHT) ;
+					AiwacMasterSendOrderCar2(CAR_STOP , STATE_STOP) ;
+					printf("\r\ncar2 stop ,car1 go on");
+
+				}
+
+		}
+	}
+	else  //  没有车到达 转弯点
+	{
+		if( myabs_double(Car1_FDistance - Car2_FDistance ) < FRONT_DISTANCEGAP)  //  两车的  前进 距离ok
 			{
-				if (Car1_FDistance <= TURING_DISTANCE)
+				// 下发  继续 默认前进 
+				AiwacMasterSendOrderCar1(designFSpeed(Car1_FDistance) , STATE_STRAIGHT) ;
+				AiwacMasterSendOrderCar2(designFSpeed(Car2_FDistance) , STATE_STRAIGHT) ;
+				printf("\r\ngo on straight");
+			}
+		else // 两车的  前进 距离  no
+			{
+				if (Car1_FDistance - Car2_FDistance >0)  // 1车在后 
 					{
-						//车1  停止，车2 继续
-						AiwacMasterSendOrderCar1(CAR_STOP , STATE_STRAIGHT) ;
-						AiwacMasterSendOrderCar2(MIN_SPEED , STATE_STRAIGHT) ;
-						printf("\r\ncar1 stop, car2 go on");
+						// 发送 2车默认速度，1车 比默认快点
+						AiwacMasterSendOrderCar1(designFSpeed(Car1_FDistance)  +MIN_SPEED, STATE_STRAIGHT) ;
+						AiwacMasterSendOrderCar2((designFSpeed(Car2_FDistance) ), STATE_STRAIGHT) ;
+						printf("\r\n car1 needs to go fast");
 					}
 				else
 					{
-						//车2	停止，车1 继续
-						AiwacMasterSendOrderCar1(MIN_SPEED , STATE_STRAIGHT) ;
-						AiwacMasterSendOrderCar2(CAR_STOP , STATE_STRAIGHT) ;
-						printf("\r\ncar2 stop ,car1 go on");
-
+						// 发送 1车默认速度，2车 比默认快点
+						AiwacMasterSendOrderCar1(designFSpeed(Car1_FDistance) , STATE_STRAIGHT) ;
+						AiwacMasterSendOrderCar2(designFSpeed(Car2_FDistance)+ MIN_SPEED , STATE_STRAIGHT) ;
+						printf("\r\n car2 needs to go fast");
 					}
-
+				
 			}
-		}
-		else  //  没有车到达 转弯点
-		{
-			if( myabs_double(Car1_FDistance - Car2_FDistance ) < FRONT_DISTANCEGAP)  //  两车的  前进 距离ok
-				{
-					// 下发  继续 默认前进 
-					AiwacMasterSendOrderCar1(designFSpeed(Car1_FDistance) , STATE_STRAIGHT) ;
-					AiwacMasterSendOrderCar2(designFSpeed(Car2_FDistance) , STATE_STRAIGHT) ;
-					printf("\r\ngo on straight");
-				}
-			else // 两车的  前进 距离  no
-				{
-					if (Car1_FDistance - Car2_FDistance >0)  // 1车在后 
-						{
-							// 发送 2车默认速度，1车 比默认快点
-							AiwacMasterSendOrderCar1(designFSpeed(Car1_FDistance)  +MIN_SPEED, STATE_STRAIGHT) ;
-							AiwacMasterSendOrderCar2((designFSpeed(Car2_FDistance) ), STATE_STRAIGHT) ;
-							printf("\r\n car1 needs to go fast");
-						}
-					else
-						{
-							// 发送 1车默认速度，2车 比默认快点
-							AiwacMasterSendOrderCar1(designFSpeed(Car1_FDistance) , STATE_STRAIGHT) ;
-							AiwacMasterSendOrderCar2(designFSpeed(Car2_FDistance)+ MIN_SPEED , STATE_STRAIGHT) ;
-							printf("\r\n car2 needs to go fast");
-						}
-					
-				}
-		}
-
 	}
+
 
 
 }
@@ -337,9 +347,9 @@ double  designFSpeed(double FD)
 	double FD_care = TURING_DISTANCE + 0.1 ;	// 前方警戒距离，需要  低速前进
 	double FDSMax = FD_MAX_SPEED;  // 规定的最大  前方速度
 	
-	if (FD>10)
+	if (FD>FD_care)  // 离危险距离较远
 	{
-		FSpeed = (FD - FD_care)*2 + FSpeed;
+		FSpeed = (FD - FD_care)*400 + FSpeed;
 	}
 
 	if (FSpeed > FDSMax)
