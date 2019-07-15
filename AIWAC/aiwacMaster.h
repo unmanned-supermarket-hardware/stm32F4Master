@@ -4,7 +4,7 @@
 #include "malloc.h"
 #include "cJSON.h"
 
-#define TURING_DISTANCE 0.5  // 前方需要转弯的  时候 m
+#define TURING_DISTANCE 0.52  // 前方需要转弯的  时候 m
 #define FRONT_DISTANCEGAP  0.02  //  两车  前后 距离差 m
 #define DEFUALT_SPEED 100  //  小车的默认速度
 #define MIN_SPEED 30  //小车 运动的最小速度
