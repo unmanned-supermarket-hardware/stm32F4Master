@@ -334,8 +334,8 @@ void Aiwac2CARTeamwork(void)
 double  designFSpeed(double FD)
 {
 	double FSpeed = 30;		// 低速的速度
-	double FD_care = 10;	// 前方警戒距离，需要  低速前进
-	double FDSMax = 40;  // 规定的最大  前方速度
+	double FD_care = TURING_DISTANCE + 0.1 ;	// 前方警戒距离，需要  低速前进
+	double FDSMax = FD_MAX_SPEED;  // 规定的最大  前方速度
 	
 	if (FD>10)
 	{
