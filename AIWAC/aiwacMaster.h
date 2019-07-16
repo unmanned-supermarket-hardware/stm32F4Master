@@ -7,10 +7,10 @@
 #define TURING_DISTANCE 0.52  // 前方需要转弯的  时候 m
 #define FRONT_DISTANCEGAP  0.02  //  两车  前后 距离差 m
 #define DEFUALT_SPEED 100  //  小车的默认速度
-#define MIN_SPEED 30  //小车 运动的最小速度
+#define MIN_SPEED 30  //小车 运动的最小速度   mm/s
 #define ACC_SPEED 150  //  小车的加速速度
 #define CAR_STOP 0  // 小车速度停止
-#define FD_MAX_SPEED 300  // 小车运动的 最大速度
+#define FD_MAX_SPEED 1000  // 小车运动的 最大速度  mm/s
 
 // 小车的运动状态
 #define STATE_STOP 0
