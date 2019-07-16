@@ -37,3 +37,7 @@
 ..\obj\usart.o: ..\FWLIB\inc\stm32f4xx_fsmc.h
 ..\obj\usart.o: ..\SYSTEM\usart\usart.h
 ..\obj\usart.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
+..\obj\usart.o: ..\AIWAC\aiwacMaster.h
+..\obj\usart.o: ..\Malloc\malloc.h
+..\obj\usart.o: ..\cJSON\cJSON.h
+..\obj\usart.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stddef.h

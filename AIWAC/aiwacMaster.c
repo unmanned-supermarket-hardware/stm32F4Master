@@ -12,7 +12,7 @@ int Car2_CorrectState = -1;
 double Car2_FDistance = -1;
 int Car2_moveState = -1;
 
-
+u8 mustStop = 0;
 
 /**************************************************************************
 函数功能：		  解析小车1发来的  数据
@@ -23,12 +23,12 @@ void PaserCar1_State(void)
 {
 	cJSON *root, *orderValue;  // 
 	
-	if (USART2_jsonParseBuF[0] == '-' ) //  还未收到运动命令
+	if (zone_1_car1_jsonParseBuF[0] == '-' ) //  还未收到运动命令
 	{
 		return;
 	}
 	
-	root = cJSON_Parse(USART2_jsonParseBuF);
+	root = cJSON_Parse(zone_1_car1_jsonParseBuF);
 
 	orderValue = cJSON_GetObjectItem(root, "CorrectState");  //  自校准情况
 	if (!orderValue) {
@@ -72,12 +72,12 @@ void PaserCar2_State(void)
 {
 	cJSON *root, *orderValue;  // 
 	
-	if (USART3_jsonParseBuF[0] == '-' ) //  还未收到运动命令
+	if (zone_1_car2_jsonParseBuF[0] == '-' ) //  还未收到运动命令
 	{
 		return;
 	}
 	
-	root = cJSON_Parse(USART3_jsonParseBuF);
+	root = cJSON_Parse(zone_1_car2_jsonParseBuF);
 
 	orderValue = cJSON_GetObjectItem(root, "CorrectState");  //  自校准情况
 	if (!orderValue) {
@@ -141,13 +141,12 @@ void AiwacMasterSendOrderCar1(double X_V, int moveState)
 	
 	strSend[0] = '#';
 	strSend[1] = '!';
+	strSend[2] = ZONE_1_CAR_1;
+	strSend[3] = MYSELF_ROLE;
 
 
 	root=cJSON_CreateObject();
 
-
-	cJSON_AddNumberToObject(root,"from", 3);
-	cJSON_AddNumberToObject(root,"to", 2);
 	cJSON_AddNumberToObject(root,"msType", 1);
 	cJSON_AddNumberToObject(root,"X_V", X_V);
 	cJSON_AddNumberToObject(root,"moveState", moveState);
@@ -158,13 +157,13 @@ void AiwacMasterSendOrderCar1(double X_V, int moveState)
 	
 	jsonSize = strlen(strJson);
 
-	strSend[2] = jsonSize >> 8;
-	strSend[3] = jsonSize;
+	strSend[4] = jsonSize >> 8;
+	strSend[5] = jsonSize;
 
-	strncpy(strSend+4,strJson,jsonSize);
+	strncpy(strSend+6,strJson,jsonSize);
 
 	// 需要打开
-	usart2_sendString(strSend,4 + jsonSize);
+	zigBee_sendString(strSend,6 + jsonSize);
 	myfree(strJson);
 
 
@@ -186,13 +185,11 @@ void AiwacMasterSendOrderCar2(double X_V, int moveState)
 		
 		strSend[0] = '#';
 		strSend[1] = '!';
-	
+		strSend[2] = ZONE_1_CAR_2;
+		strSend[3] = MYSELF_ROLE;
 	
 		root=cJSON_CreateObject();
 	
-	
-		cJSON_AddNumberToObject(root,"from", 3);
-		cJSON_AddNumberToObject(root,"to", 2);
 		cJSON_AddNumberToObject(root,"msType", 1);
 		cJSON_AddNumberToObject(root,"X_V", X_V);
 		cJSON_AddNumberToObject(root,"moveState", moveState);
@@ -203,13 +200,13 @@ void AiwacMasterSendOrderCar2(double X_V, int moveState)
 		
 		jsonSize = strlen(strJson);
 	
-		strSend[2] = jsonSize >> 8;
-		strSend[3] = jsonSize;
+		strSend[4] = jsonSize >> 8;
+		strSend[5] = jsonSize;
 	
-		strncpy(strSend+4,strJson,jsonSize);
+		strncpy(strSend+6,strJson,jsonSize);
 	
 		// 需要打开
-		usart3_sendString(strSend,4 + jsonSize);
+		zigBee_sendString(strSend,6 + jsonSize);
 		myfree(strJson);
 
 
@@ -229,9 +226,17 @@ void Aiwac2CARTeamwork(void)
 		return;
 	}
 
+	if (mustStop == 1)
+	{
+		//出现故障停止
+		printf("\r\n SomeThing is bad！！！！");
+		AiwacMasterSendOrderCar1(CAR_STOP , STATE_STOP) ;
+		AiwacMasterSendOrderCar2(CAR_STOP , STATE_STOP) ;
+
+	}
 	if ((Car1_moveState == STATE_STOP) && (Car1_moveState == STATE_STOP)) // 两车 刚上电 、刚入弯道、刚出弯道
 	{
-		if (  (Car1_CorrectState  == 0)|| ( Car2_CorrectState == 0) )//姿态未校准
+		if (  (Car1_CorrectState  <= 0)|| ( Car2_CorrectState <= 0) )//姿态未校准
 		{
 			printf("\r\nwaiting  for correction");
 			return ;
@@ -312,6 +317,13 @@ void Aiwac2CARTeamwork(void)
 			}
 		else // 两车的  前进 距离  no
 			{
+
+				if(myabs_double(Car1_FDistance - Car2_FDistance) >0.3)  // 两车间距太大，危险，紧急停止
+				{
+					mustStop = 1;
+					printf("\r\n the distance with cars  is too far");
+				}
+				
 				if (Car1_FDistance - Car2_FDistance >0)  // 1车在后 
 					{
 						// 发送 2车默认速度，1车 比默认快点

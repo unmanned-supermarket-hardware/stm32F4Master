@@ -27,43 +27,43 @@ Project File Date:  07/13/2019
 <h2>Output:</h2>
 Build target 'USART'
 compiling main.c...
-main.c(27): warning:  #223-D: function "uart2_init" declared implicitly
+main.c(21): warning:  #223-D: function "uart2_init" declared implicitly
         uart2_init(115200); // car1
-main.c(28): warning:  #223-D: function "uart3_init" declared implicitly
+main.c(22): warning:  #223-D: function "uart3_init" declared implicitly
         uart3_init(115200);  //car2
-main.c(20): warning:  #177-D: variable "t" was declared but never referenced
+main.c(14): warning:  #177-D: variable "t" was declared but never referenced
         u8 t;
-main.c(21): warning:  #177-D: variable "len" was declared but never referenced
+main.c(15): warning:  #177-D: variable "len" was declared but never referenced
         u8 len; 
-main.c(22): warning:  #177-D: variable "times" was declared but never referenced
+main.c(16): warning:  #177-D: variable "times" was declared but never referenced
         u16 times=0;  
 main.c: 5 warnings, 0 errors
 compiling usart.c...
-..\SYSTEM\usart\usart.c(226): warning:  #223-D: function "memset" declared implicitly
+..\SYSTEM\usart\usart.c(222): warning:  #223-D: function "memset" declared implicitly
         memset(USART2_jsonBuF, 0, sizeof(USART2_jsonBuF));
-..\SYSTEM\usart\usart.c(280): warning:  #223-D: function "strcpy" declared implicitly
-                                strcpy(USART2_jsonParseBuF,USART2_jsonBuF);
-..\SYSTEM\usart\usart.c(391): warning:  #223-D: function "memset" declared implicitly
-        memset(USART3_jsonBuF, 0, sizeof(USART3_jsonBuF));
-..\SYSTEM\usart\usart.c(444): warning:  #223-D: function "strcpy" declared implicitly
-                                strcpy(USART3_jsonParseBuF, USART3_jsonBuF);
+..\SYSTEM\usart\usart.c(341): warning:  #223-D: function "strcpy" declared implicitly
+                                                        strcpy(zone_1_car1_jsonParseBuF, USART2_jsonBuF);
+..\SYSTEM\usart\usart.c(346): warning:  #223-D: function "strcpy" declared implicitly
+                                                        strcpy(zone_1_car2_jsonParseBuF, USART2_jsonBuF);
+..\SYSTEM\usart\usart.c(481): warning:  #550-D: variable "temp" was set but never used
+        u8 temp;
 ..\SYSTEM\usart\usart.c: 4 warnings, 0 errors
 compiling aiwacMaster.c...
 ..\AIWAC\aiwacMaster.c(31): warning:  #167-D: argument of type "u8 *" is incompatible with parameter of type "const char *"
-        root = cJSON_Parse(USART2_jsonParseBuF);
+        root = cJSON_Parse(zone_1_car1_jsonParseBuF);
 ..\AIWAC\aiwacMaster.c(80): warning:  #167-D: argument of type "u8 *" is incompatible with parameter of type "const char *"
-        root = cJSON_Parse(USART3_jsonParseBuF);
-..\AIWAC\aiwacMaster.c(159): warning:  #223-D: function "strlen" declared implicitly
+        root = cJSON_Parse(zone_1_car2_jsonParseBuF);
+..\AIWAC\aiwacMaster.c(158): warning:  #223-D: function "strlen" declared implicitly
         jsonSize = strlen(strJson);
-..\AIWAC\aiwacMaster.c(164): warning:  #223-D: function "strncpy" declared implicitly
-        strncpy(strSend+4,strJson,jsonSize);
-..\AIWAC\aiwacMaster.c(204): warning:  #223-D: function "strlen" declared implicitly
+..\AIWAC\aiwacMaster.c(163): warning:  #223-D: function "strncpy" declared implicitly
+        strncpy(strSend+6,strJson,jsonSize);
+..\AIWAC\aiwacMaster.c(201): warning:  #223-D: function "strlen" declared implicitly
                 jsonSize = strlen(strJson);
-..\AIWAC\aiwacMaster.c(209): warning:  #223-D: function "strncpy" declared implicitly
-                strncpy(strSend+4,strJson,jsonSize);
+..\AIWAC\aiwacMaster.c(206): warning:  #223-D: function "strncpy" declared implicitly
+                strncpy(strSend+6,strJson,jsonSize);
 ..\AIWAC\aiwacMaster.c: 6 warnings, 0 errors
 linking...
-Program Size: Code=23274 RO-data=1230 RW-data=132 ZI-data=24844  
+Program Size: Code=23126 RO-data=1226 RW-data=120 ZI-data=20744  
 FromELF: creating hex file...
 "..\OBJ\USART.axf" - 0 Error(s), 15 Warning(s).
 

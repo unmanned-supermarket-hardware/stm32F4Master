@@ -158,8 +158,6 @@ void USART1_IRQHandler(void)                	//串口1中断服务程序
 
 //串口2中断服务程序
 //串口发送缓存区 
-u8 USART2_TX_BUF[USART2_MAX_SEND_LEN]; //发送缓冲,最大USART2_MAX_SEND_LEN字节
-u8 USART2_RX_BUF[USART2_MAX_RECV_LEN]; //接收缓冲,最大USART2_MAX_RECV_LEN个字节.
 
 u16 USART2_RX_STA = 0;
 
@@ -208,25 +206,29 @@ USART_Cmd(USART2, ENABLE);                    //使能串口
 	
 }
 
-u8 UASRT2 = 0;
-char USART2_startMS = '+';	//保存协议前两字节			#！
-u8 USART2_startGetMS = 0;		// 0：还不能开始，1：接收  数据长度位 2：开始接收json串
 int	USART2_dataLen = -1;		// json字符串的长度
-u8 USART2_jsonBuF[1000]; 			// 在中断的时候 存储接收的json 字符串
+u8 USART2_jsonBuF[500]; 			// 在中断的时候 存储接收的json 字符串
 int USART2_jsonDataCount = 0;  //当前接收的  json 字符串数
-u8 USART2_jsonParseBuF[1000]; 			//解析的时候用 存储接收的json 字符串，防止跟中断共用一个  字符串 读写 出问题
-int uart2GetLen = 0;  //  进入协议后，收到的 字节数目
+u8 zone_1_car1_jsonParseBuF[500]; 			//解析的时候用 存储接收的json 字符串，防止跟中断共用一个  字符串 读写 出问题
+u8 zone_1_car2_jsonParseBuF[500]; 			//解析的时候用 存储接收的json 字符串，防止跟中断共用一个  字符串 读写 出问题
+
+int uart2ByteNum = 0;  // 串口2 接收符合协议的字节数目
+int MSFrom = 0;  // 数据来自哪
 
 void USART2StateTo0(void)
 {
 	// 恢复初始化
-	USART2_startMS = '+';	//保存协议前两字节			#！
-	USART2_startGetMS = 0; 	// 0：还不能开始，1：接收  数据长度位 2：开始接收json串
 	USART2_dataLen = -1;		// json字符串的长度
 	memset(USART2_jsonBuF, 0, sizeof(USART2_jsonBuF));
 	USART2_jsonDataCount = 0;	//当前接收的  json 字符串数
-	uart2GetLen = 0;
+	uart2ByteNum = 0;
+	MSFrom = 0;
 }
+
+
+/**************************实现函数**********************************************
+*功    能:		usart2连zigBee，与小车 和取货单元通信
+*********************************************************************************/
 
 void USART2_IRQHandler(void)                	//串口2中断服务程序
 {
@@ -238,50 +240,118 @@ void USART2_IRQHandler(void)                	//串口2中断服务程序
 		
 		temp =USART2->DR;
 
-
-		// 判断协议数据的开头
-	
-		if (USART2_startGetMS == 0)
-		{
-			if (temp == '#')
+		// 第一个字节
+			if (uart2ByteNum == 0)
 			{
-				USART2_startMS = '#';
-				uart2GetLen++;
+				if (temp == '#')
+				{
+					uart2ByteNum++;
+					//printf("\r\n get	1!!");
+				}
+					return ;	
 			}
-			else if ((temp == '!') && (USART2_startMS == '#') && (uart2GetLen == 1)) 
+		
+			// 第二个字节
+			if (uart2ByteNum == 1)
 			{
-				USART2_startGetMS = 1;// 协议标志 前两字节 接收ok	
-				uart2GetLen++;
+				if (temp == '!')
+				{
+					uart2ByteNum++;
+					//printf("\r\n get	2!!");
+					return ;	
+				}
+				else
+				{
+					uart2ByteNum = 0;
+					//printf("\r\n get	2	FAILED!!");
+					return ;
+				}
+						
 			}
-			else if ((temp != '!')  && (USART2_startMS == '#')  && (uart2GetLen == 1)) // 不满足  协议，重新  接收
-			{
-				USART2StateTo0();
-
-			}
-		}
-		else if (USART2_startGetMS == 1)// 接收 协议数据  内 json 字符串的长度
-		{
-			if (USART2_dataLen == -1)
-			{
-				USART2_dataLen = temp*256;
-			}else if(USART2_dataLen != -1)
-			{
-				USART2_dataLen = USART2_dataLen + temp;
-				USART2_startGetMS =2;				
-			}		
-		}else if (USART2_startGetMS == 2)	// // 开始接收	Json 串
-		{
+		
+			// 接收 TO
+			// 第三个字节
+			if (uart2ByteNum == 2)
+				{
+					if (temp == MYSELF_ROLE)
+					{
+						uart2ByteNum++;
+						//printf("\r\n get	my data!!");
+						return ;
+					}
+					else
+					{
+						uart2ByteNum = 0;
+						//printf("\r\n get	3	FAILED!!");
+						return ;
+					}
+		
+				}
+		
+			// 接收 FROM
+			// 第四个字节
+			if (uart2ByteNum == 3)
+				{
+					if (temp < SYS_MAX_FLAG)
+					{
+						MSFrom = temp;
+						uart2ByteNum++;
+						return ;
+					}
+					else
+					{
+						uart2ByteNum = 0;
+						return ;
+					}
+		
+				}
+		
+		
+			// 接收 json Len	  高字节
+			// 第五个字节
+			if (uart2ByteNum == 4)
+				{
+					USART2_dataLen = temp*256;
+					uart2ByteNum++;
+					return ;
+				}
 			
-			USART2_jsonBuF[USART2_jsonDataCount] = temp;
-			USART2_jsonDataCount++;
-			
-			if (USART2_jsonDataCount == USART2_dataLen)  //  本次接收完毕
+			// 接收 json Len	  低字节
+			// 第六个字节 
+			if (uart2ByteNum == 5)
+				{
+					USART2_dataLen = USART2_dataLen + temp;
+					uart2ByteNum++;
+					//printf("\r\n get	6!!");
+					return ;
+				}
+		
+			// 开始接收
+			if (uart2ByteNum == 6)
 			{
-				strcpy(USART2_jsonParseBuF,USART2_jsonBuF);
-				USART2StateTo0();				
-			}
-		}
+				USART2_jsonBuF[USART2_jsonDataCount] = temp;
+				USART2_jsonDataCount++;
+				
+				if (USART2_jsonDataCount == USART2_dataLen)  //  本次接收完毕
+				{
 
+					// 针对不同的角色  进行 操作
+					if (MSFrom == ZONE_1_CAR_1)
+						{
+							strcpy(zone_1_car1_jsonParseBuF, USART2_jsonBuF);
+						}
+
+					if (MSFrom == ZONE_1_CAR_2)
+						{
+							strcpy(zone_1_car2_jsonParseBuF, USART2_jsonBuF);
+						}
+					
+					//printf("\r\zone_1_car1_jsonParseBuF:%s",zone_1_car1_jsonParseBuF);
+					USART2StateTo0();	
+				}
+		
+				return ;
+			}
 
 	}
 
@@ -297,6 +367,15 @@ void usart2_send(u8 data)
 	while((USART2->SR&0x40)==0);	
 }
 
+
+
+/**************************实现函数**********************************************
+*功    能:		用Zigbee发数据
+*********************************************************************************/
+void zigBee_sendString(char *data,u8 len)
+{
+	usart2_sendString(data, len);
+}
 
 /**************************实现函数**********************************************
 *功    能:		usart2发送一个字符串
@@ -322,8 +401,6 @@ void usart2_sendString(char *data,u8 len)
 
 //串口3中断服务程序
 //串口发送缓存区 
-u8 USART3_TX_BUF[USART3_MAX_SEND_LEN]; //发送缓冲,最大USART3_MAX_SEND_LEN字节
-u8 USART3_RX_BUF[USART3_MAX_RECV_LEN]; //接收缓冲,最大USART3_MAX_RECV_LEN个字节.
     
 u16 USART3_RX_STA = 0;
 
@@ -372,13 +449,14 @@ void uart3_init(u32 bound){
 	
 }
 
+/*
 u8 UASRT3 = 0;
 char USART3_startMS = '+';	//保存协议前两字节			#！
 u8 USART3_startGetMS = 0;		// 0：还不能开始，1：接收  数据长度位 2：开始接收json串
 int	USART3_dataLen = -1;		// json字符串的长度
 u8 USART3_jsonBuF[1000]; 			// 在中断的时候 存储接收的json 字符串
 int USART3_jsonDataCount = 0;  //当前接收的  json 字符串数
-u8 USART3_jsonParseBuF[1000]; 			//解析的时候用 存储接收的json 字符串，防止跟中断共用一个  字符串 读写 出问题
+
 int uart3GetLen = 0; 
 
 
@@ -394,7 +472,7 @@ void  USART3StateTo0(void )
 
 
 }
-
+*/
 void USART3_IRQHandler(void)                	//串口3中断服务程序
 {
 
@@ -407,7 +485,7 @@ void USART3_IRQHandler(void)                	//串口3中断服务程序
 		temp =USART3->DR;
 
 			// 判断协议数据的开头
-	
+	/*
 		if (USART3_startGetMS == 0)
 		{
 			if (temp == '#')
@@ -445,7 +523,7 @@ void USART3_IRQHandler(void)                	//串口3中断服务程序
 				USART3StateTo0();	
 			}
 		}
-
+*/
 
 	}
 

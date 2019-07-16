@@ -3,6 +3,8 @@
 #include "stdio.h"	
 #include "stm32f4xx_conf.h"
 #include "sys.h" 
+#include "aiwacMaster.h"
+
 //////////////////////////////////////////////////////////////////////////////////	 
 //本程序只供学习使用，未经作者许可，不得用于其它任何用途
 //Mini STM32开发板
@@ -38,34 +40,27 @@ void uart_init(u32 bound);
 
 
 #define EN_USART2_RX 			1		//使能（1）/禁止（0）串口1接收
-extern u8 UASRT2;
 
 
-#define USART2_MAX_RECV_LEN 400 //最大接收缓存字节数
-#define USART2_MAX_SEND_LEN 400 //最大发送缓存字节数
 #define USART2_RX_EN 1 //0,不接收;1,接收.
 
-extern u8  USART2_RX_BUF[USART2_MAX_RECV_LEN]; //接收缓冲,最大USART2_MAX_RECV_LEN字节
-extern u8  USART2_TX_BUF[USART2_MAX_SEND_LEN]; //发送缓冲,最大USART2_MAX_SEND_LEN字节
 extern u16 USART2_RX_STA;   //接收数据状态
-extern u8 USART2_jsonParseBuF[1000]; 
+extern u8 zone_1_car1_jsonParseBuF[500]; 
+extern u8 zone_1_car2_jsonParseBuF[500];
 
 
 void usart2_init(u32 bound); //串口2初始化 
 void usart2_send(u8 data);
 void usart2_sendString(char *data,u8 len);
+void zigBee_sendString(char *data,u8 len);
 
 
 
 
-#define USART3_MAX_RECV_LEN 400 //最大接收缓存字节数
-#define USART3_MAX_SEND_LEN 400 //最大发送缓存字节数
 #define USART3_RX_EN 1 //0,不接收;1,接收.
 
-extern u8  USART3_RX_BUF[USART3_MAX_RECV_LEN]; //接收缓冲,最大USART3_MAX_RECV_LEN字节
-extern u8  USART3_TX_BUF[USART3_MAX_SEND_LEN]; //发送缓冲,最大USART3_MAX_SEND_LEN字节
 extern u16 USART3_RX_STA;   //接收数据状态
-extern u8 USART3_jsonParseBuF[1000];
+
 
 
 void usart3_init(u32 bound); //串口3初始化 

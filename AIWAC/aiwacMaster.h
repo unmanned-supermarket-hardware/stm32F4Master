@@ -18,6 +18,19 @@
 #define STATE_TURN_RIGHT 2
 #define STATE_TURN_LEFT 3
 
+// ziigbee 通信角色标志
+#define	CONTROL_MASTER 			1
+#define	ZONE_1_CAR_1 			11	
+#define	ZONE_1_CAR_2 			12	
+#define	ZONE_1_PICKUP_UNIT		13
+#define	ZONE_1_MODULE			14
+#define	ZONE_2_CAR_1 			21	
+#define	ZONE_2_CAR_2 			22	
+#define	ZONE_2_PICKUP_UNIT		23
+#define	ZONE_2_MODULE			24
+#define	SYS_MAX_FLAG			25
+#define	MYSELF_ROLE				CONTROL_MASTER   //  每次都需要改
+
 
 extern int Car1_CorrectState ;
 extern double Car1_FDistance ;
@@ -29,6 +42,7 @@ extern int Car2_CorrectState ;
 extern double Car2_FDistance ;
 extern int Car2_moveState;
 
+extern u8 mustStop ;
 
 void PaserCar2_State(void);
 void PaserCar1_State(void);
