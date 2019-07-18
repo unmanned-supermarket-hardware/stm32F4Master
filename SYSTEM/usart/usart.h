@@ -32,7 +32,7 @@
 extern u8  USART_RX_BUF[USART_REC_LEN]; //接收缓冲,最大USART_REC_LEN个字节.末字节为换行符 
 extern u16 USART_RX_STA;         		//接收状态标记	
 //如果想串口中断接收，请不要注释以下宏定义
-void uart_init(u32 bound);
+void uart1_init(u32 bound);
 
 
 
@@ -51,7 +51,7 @@ extern u16 USART2_RX_STA;   //接收数据状态
 extern u8 USART2_jsonParseBuF[1000]; 
 
 
-void usart2_init(u32 bound); //串口2初始化 
+void uart2_init(u32 bound); //串口2初始化 
 void usart2_send(u8 data);
 void usart2_sendString(char *data,u8 len);
 
@@ -68,9 +68,24 @@ extern u16 USART3_RX_STA;   //接收数据状态
 extern u8 USART3_jsonParseBuF[1000];
 
 
-void usart3_init(u32 bound); //串口3初始化 
+void uart3_init(u32 bound); //串口3初始化 
 void usart3_send(u8 data);
 void usart3_sendString(char *data,u8 len);
+
+
+//串口4
+//TX:PC10   RX:PC11
+void uart4_init(u32 bound); //串口4初始化 
+void uart4_send(u8 data);
+void uart4_sendString(char *data,u8 len);
+
+//串口5
+//RX: PD2  TX:  PC10
+void uart5_init(u32 bound); //串口4初始化 
+void uart5_send(u8 data);
+void uart5_sendString(char *data,u8 len);
+
+
 
 #endif
 

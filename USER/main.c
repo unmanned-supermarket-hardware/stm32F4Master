@@ -23,7 +23,7 @@ int main(void)
 	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);//设置系统中断优先级分组2
 	delay_init(168);		//延时初始化 
 	
-	uart_init(115200);	//串口初始化波特率为115200
+	uart1_init(115200);	//串口初始化波特率为115200
 	uart2_init(115200); // car1
 	uart3_init(115200);  //car2
 	

@@ -69,7 +69,7 @@ u16 USART_RX_STA=0;       //接收状态标记
 
 //初始化IO 串口1 
 //bound:波特率
-void uart_init(u32 bound){
+void uart1_init(u32 bound){
    //GPIO端口设置
   GPIO_InitTypeDef GPIO_InitStructure;
 	USART_InitTypeDef USART_InitStructure;
@@ -477,5 +477,199 @@ void usart3_sendString(char *data,u8 len)
 }
 
 
+
+//初始化IO 串口4 
+//bound:波特率
+void uart4_init(u32 bound){
+
+	NVIC_InitTypeDef NVIC_InitStructure;
+	GPIO_InitTypeDef GPIO_InitStructure;
+	USART_InitTypeDef USART_InitStructure;
+
+
+	//1.串口时钟和和GPIO时钟使能。
+	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOC,ENABLE); //使能GPIOC时钟
+	RCC_APB1PeriphClockCmd(RCC_APB1Periph_UART4,ENABLE);//使能UART4时钟
+	//2.设置引脚复用器映射 
+	GPIO_PinAFConfig(GPIOC,GPIO_PinSource11,GPIO_AF_UART4); //GPIOC11复用为UART4
+	GPIO_PinAFConfig(GPIOC,GPIO_PinSource10,GPIO_AF_UART4); //GPIOC10复用为UART4  
+	//3.GPIO端口模式设置
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_11 | GPIO_Pin_10; //GPIOC11和GPIOC10初始化
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;//复用功能
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz; //速度50MHz
+	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP; //推挽复用输出
+	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP; //上拉
+	GPIO_Init(GPIOC,&GPIO_InitStructure); //初始化GPIOC11，和GPIOC10
+	//4.串口参数初始化：设置波特率，字长，奇偶校验等参数
+	USART_InitStructure.USART_BaudRate = bound;//波特率一般设置为9600;
+	USART_InitStructure.USART_WordLength = USART_WordLength_8b;//字长为8位数据格式
+	USART_InitStructure.USART_StopBits = USART_StopBits_1;//一个停止位
+	USART_InitStructure.USART_Parity = USART_Parity_No;//无奇偶校验位
+	USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;//无硬件数据流控制
+	USART_InitStructure.USART_Mode = USART_Mode_Rx | USART_Mode_Tx; //收发模式
+	USART_Init(UART4, &USART_InitStructure); //初始化串口2参数
+	//5.初始化NVIC
+	NVIC_InitStructure.NVIC_IRQChannel = UART4_IRQn;
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority=0 ;//抢占优先级0
+	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 3; //子优先级3
+	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE; //IRQ通道使能
+	NVIC_Init(&NVIC_InitStructure); //根据指定的参数初始化VIC寄存器
+	//6.开启中断
+	USART_ITConfig(UART4, USART_IT_RXNE, ENABLE);//开启中断  
+	//7.使能串口 
+	USART_Cmd(UART4, ENABLE);                    //使能串口 
+
+	
+}
+
+
+
+
+void UART4_IRQHandler(void)                	//串口4中断服务程序
+{
+
+	u8 temp;
+
+	
+	if(USART_GetITStatus(UART4, USART_IT_RXNE) != RESET) 
+	{
+		
+		temp =UART4->DR;
+		printf("\r\n33");
+		
+	
+		
+
+	}
+} 
+	
+//////////////////////////////////////////////////////////////////
+/**************************实现函数**********************************************
+*功    能:		uart4发送一个字节
+*********************************************************************************/
+void uart4_send(u8 data)
+{
+	UART4->DR = data;
+	while((UART4->SR&0x40)==0);	
+}
+
+
+/**************************实现函数**********************************************
+*功    能:		uart4发送一个字符串
+*********************************************************************************/
+void uart4_sendString(char *data,u8 len)
+{
+	int i=0;
+	for(i=0;i<len;i++)
+	{
+		UART4->DR = data[i];
+		while((UART4->SR&0x40)==0);	
+	}
+	
+}
+
+
+
+
+//初始化IO 串口5 
+//bound:波特率
+void uart5_init(u32 bound){
+
+	NVIC_InitTypeDef NVIC_InitStructure;
+	GPIO_InitTypeDef GPIO_InitStructure;
+	USART_InitTypeDef USART_InitStructure;
+
+
+	//1.串口时钟和和GPIO时钟使能。
+	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOC,ENABLE); //使能GPIOC时钟
+	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOD,ENABLE); //使能GPIOD时钟
+	RCC_APB1PeriphClockCmd(RCC_APB1Periph_UART5,ENABLE);//使能UART5时钟
+	//2.设置引脚复用器映射 
+	GPIO_PinAFConfig(GPIOC,GPIO_PinSource12,GPIO_AF_UART5); //GPIOC12复用为UART5
+	GPIO_PinAFConfig(GPIOD,GPIO_PinSource2,GPIO_AF_UART5); //GPIOD2复用为UART4  
+	//3.GPIO端口模式设置
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_12; //GPIOC12初始化
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;//复用功能
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz; //速度50MHz
+	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP; //推挽复用输出
+	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP; //上拉
+	GPIO_Init(GPIOC,&GPIO_InitStructure); //初始化GPIOC12
+
+	//3.GPIO端口模式设置
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2; //GPIOD2初始化
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;//复用功能
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz; //速度50MHz
+	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP; //推挽复用输出
+	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP; //上拉
+	GPIO_Init(GPIOD,&GPIO_InitStructure); //初始化GPIOD2
+
+	
+	//4.串口参数初始化：设置波特率，字长，奇偶校验等参数
+	USART_InitStructure.USART_BaudRate = bound;//波特率一般设置为9600;
+	USART_InitStructure.USART_WordLength = USART_WordLength_8b;//字长为8位数据格式
+	USART_InitStructure.USART_StopBits = USART_StopBits_1;//一个停止位
+	USART_InitStructure.USART_Parity = USART_Parity_No;//无奇偶校验位
+	USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;//无硬件数据流控制
+	USART_InitStructure.USART_Mode = USART_Mode_Rx | USART_Mode_Tx; //收发模式
+	USART_Init(UART5, &USART_InitStructure); //初始化串口2参数
+	//5.初始化NVIC
+	NVIC_InitStructure.NVIC_IRQChannel = UART5_IRQn;
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority=0 ;//抢占优先级0
+	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 3; //子优先级3
+	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE; //IRQ通道使能
+	NVIC_Init(&NVIC_InitStructure); //根据指定的参数初始化VIC寄存器
+	//6.开启中断
+	USART_ITConfig(UART5, USART_IT_RXNE, ENABLE);//开启中断  
+	//7.使能串口 
+	USART_Cmd(UART5, ENABLE);                    //使能串口 
+
+	
+}
+
+
+
+
+void UART5_IRQHandler(void)                	//串口5中断服务程序
+{
+
+	u8 temp;
+
+	
+	if(USART_GetITStatus(UART5, USART_IT_RXNE) != RESET) 
+	{
+		
+		temp =UART5->DR;
+		printf("\r\n55");
+		
+	
+		
+
+	}
+} 
+	
+//////////////////////////////////////////////////////////////////
+/**************************实现函数**********************************************
+*功    能:		uart4发送一个字节
+*********************************************************************************/
+void uart5_send(u8 data)
+{
+	UART5->DR = data;
+	while((UART5->SR&0x40)==0);	
+}
+
+
+/**************************实现函数**********************************************
+*功    能:		uart4发送一个字符串
+*********************************************************************************/
+void uart5_sendString(char *data,u8 len)
+{
+	int i=0;
+	for(i=0;i<len;i++)
+	{
+		UART5->DR = data[i];
+		while((UART5->SR&0x40)==0);	
+	}
+	
+}
 
 
