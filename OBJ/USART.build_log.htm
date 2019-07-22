@@ -39,11 +39,27 @@ compiling aiwacMaster.c...
                 jsonSize = strlen(strJson);
 ..\AIWAC\aiwacMaster.c(209): warning:  #223-D: function "strncpy" declared implicitly
                 strncpy(strSend+4,strJson,jsonSize);
-..\AIWAC\aiwacMaster.c: 6 warnings, 0 errors
+..\AIWAC\aiwacMaster.c(479): warning:  #223-D: function "delay_ms" declared implicitly
+                delay_ms(50); //   µÈ´ý×ªÍê
+..\AIWAC\aiwacMaster.c(489): warning:  #223-D: function "delay_ms" declared implicitly
+                        delay_ms(50);
+..\AIWAC\aiwacMaster.c(512): warning:  #223-D: function "delay_ms" declared implicitly
+                                                delay_ms(50);
+..\AIWAC\aiwacMaster.c(526): warning:  #223-D: function "delay_ms" declared implicitly
+                                                delay_ms(50);
+..\AIWAC\aiwacMaster.c(585): warning:  #223-D: function "delay_ms" declared implicitly
+                        delay_ms(50);
+..\AIWAC\aiwacMaster.c(620): warning:  #223-D: function "delay_ms" declared implicitly
+                        delay_ms(50);
+..\AIWAC\aiwacMaster.c(640): warning:  #223-D: function "delay_ms" declared implicitly
+                                        delay_ms(50);
+..\AIWAC\aiwacMaster.c(737): warning:  #223-D: function "delay_ms" declared implicitly
+                        delay_ms(50);
+..\AIWAC\aiwacMaster.c: 14 warnings, 0 errors
 linking...
-Program Size: Code=23370 RO-data=1230 RW-data=132 ZI-data=24844  
+Program Size: Code=23958 RO-data=1082 RW-data=132 ZI-data=24844  
 FromELF: creating hex file...
-"..\OBJ\USART.axf" - 0 Error(s), 6 Warning(s).
+"..\OBJ\USART.axf" - 0 Error(s), 14 Warning(s).
 
 <h2>Collection of Component include folders:</h2>
   C:\0MySpace\aiwac_project\nobodySuperMarcket\STM32Master\stm32F4Master\USER\RTE

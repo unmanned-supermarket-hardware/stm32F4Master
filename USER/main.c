@@ -31,15 +31,14 @@ int main(void)
 	USART2_jsonParseBuF[0] = '-';
 	USART3_jsonParseBuF[0] = '-';
 	
-	
+
+
+	/*
 	while(1)
 	{
 		delay_ms(50); 
 		
 		// 解析 两小车的数据
-		PaserCar2_State();
-		PaserCar1_State();
-
 		
 		printf("\r\n Car1:Car1_CorrectState :%d,  Car1_FDistance:%f,   Car1_moveState:%d",Car1_CorrectState ,Car1_FDistance, Car1_moveState);
 		printf("\r\n Car2:Car2_CorrectState :%d,  Car2_FDistance:%f,   Car2_moveState:%d",Car2_CorrectState ,Car2_FDistance, Car2_moveState);
@@ -47,5 +46,14 @@ int main(void)
 		Aiwac2CARTeamwork();
 	
 	}
+
+	*/
+	goGoalPosition(FRONT_DIRECTION, TURING_DISTANCE);
+	sendTuringOrder(STATE_TURN_RIGHT);
+	
+	goGoalPosition(FRONT_DIRECTION, 0.30);
+
+
+	
 }
 

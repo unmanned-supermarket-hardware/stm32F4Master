@@ -21,6 +21,14 @@
 #define STATE_TURN_LEFT 3
 
 
+
+// 小车前进方向用
+#define FRONT_DIRECTION  1
+
+#define BACK_DIRECTION  2
+
+
+
 extern int Car1_CorrectState ;
 extern double Car1_FDistance ;
 extern int Car1_moveState ;
@@ -39,6 +47,12 @@ void AiwacMasterSendOrderCar1(double X_V, int moveState);
 void AiwacMasterSendOrderCar2(double X_V, int moveState);
 void Aiwac2CARTeamwork(void);
 double  designFSpeed(double FD);
+void goGoalPosition(int direction,double needDistance);
+void goStartTogether(int direction);
+void goToLocation(int direction,double needDistance);
+double  designFSpeed2(double FD, double FD_care,double iniTDistance);
+void sendTuringOrder(int Left_or_Right);
+
 
 
 #endif

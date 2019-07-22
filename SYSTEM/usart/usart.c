@@ -278,7 +278,9 @@ void USART2_IRQHandler(void)                	//串口2中断服务程序
 			if (USART2_jsonDataCount == USART2_dataLen)  //  本次接收完毕
 			{
 				strcpy(USART2_jsonParseBuF,USART2_jsonBuF);
-				USART2StateTo0();				
+				USART2StateTo0();	
+				PaserCar1_State();
+				
 			}
 		}
 
@@ -443,6 +445,7 @@ void USART3_IRQHandler(void)                	//串口3中断服务程序
 			{
 				strcpy(USART3_jsonParseBuF, USART3_jsonBuF);
 				USART3StateTo0();	
+				PaserCar2_State();
 			}
 		}
 
