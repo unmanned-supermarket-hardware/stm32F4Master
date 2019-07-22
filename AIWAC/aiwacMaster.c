@@ -754,6 +754,7 @@ void sendTuringOrder(int Left_or_Right)
 	//	转弯的  方向 要看 在 超市哪边
 	AiwacMasterSendOrderCar1(CAR_STOP , Left_or_Right) ;
 	AiwacMasterSendOrderCar2(CAR_STOP , Left_or_Right) ;
+	delay_ms(500);
 	printf("\r\nturing");
 }
 
