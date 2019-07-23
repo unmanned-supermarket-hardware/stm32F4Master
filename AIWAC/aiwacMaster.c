@@ -458,7 +458,7 @@ void goToLocation(int direction,double needDistance)
 	goStartTogether(direction);
 
 	// 运动到某方向的，指定地点
-	goGoalPosition( direction,needDistance);
+	//goGoalPosition( direction,needDistance);
 
 }
 
@@ -479,6 +479,12 @@ void goStartTogether(int direction)
 		delay_ms(50); //   等待转完
 	}
 
+
+
+	AiwacMasterSendOrderCar1(CAR_STOP , STATE_STOP) ;
+	AiwacMasterSendOrderCar2(CAR_STOP , STATE_STOP) ;
+	delay_ms(1000);
+
 	while (1)
 		{
 			if ((Car1_FDistance>0) && (Car2_FDistance>0))  //为获取到前方距离
@@ -492,8 +498,7 @@ void goStartTogether(int direction)
 		}
 
 
-	AiwacMasterSendOrderCar1(CAR_STOP , STATE_STOP) ;
-	AiwacMasterSendOrderCar2(CAR_STOP , STATE_STOP) ;
+	
 
 	//等校正
 	while (1) 
@@ -552,13 +557,13 @@ void goStartTogether(int direction)
 								printf("\r\n goStartTogether:over");
 
 							}
-						else if ((Car2_FDistance)> 5*TogetherGap+ goalLocation) //还较远
+						else if ((Car2_FDistance)> 6*TogetherGap+ goalLocation) //还较远
 							{
 
 								AiwacMasterSendOrderCar2(3*MIN_SPEED , STATE_STRAIGHT) ; 
 								printf("\r\n goStartTogether:too far");
 							}
-						else if ((Car2_FDistance)> TogetherGap+ goalLocation) //还较远
+						else if ((Car2_FDistance)> TogetherGap+ goalLocation) //较近
 							{
 								AiwacMasterSendOrderCar2(MIN_SPEED , STATE_STRAIGHT) ; 
 								printf("\r\n goStartTogether:too  too far");
@@ -590,13 +595,13 @@ void goStartTogether(int direction)
 								printf("\r\n goStartTogether:over");
 
 							}
-						else if ((Car1_FDistance)> 5*TogetherGap+ goalLocation) //还较远
+						else if ((Car1_FDistance)> 6*TogetherGap+ goalLocation) //还较远
 							{
 
 								AiwacMasterSendOrderCar1(3*MIN_SPEED , STATE_STRAIGHT) ; 
 								printf("\r\n goStartTogether:too far");
 							}
-						else if ((Car1_FDistance)> TogetherGap+ goalLocation) //还较远
+						else if ((Car1_FDistance)> TogetherGap+ goalLocation) //较近
 							{
 								AiwacMasterSendOrderCar1(MIN_SPEED , STATE_STRAIGHT) ; 
 								printf("\r\n goStartTogether:too  too far");

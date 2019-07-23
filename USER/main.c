@@ -70,11 +70,11 @@ int main(void)
 
 	
 	
-	goStartTogether(FRONT_DIRECTION);
-	//goToLocation(FRONT_DIRECTION, TURING_DISTANCE);
-	//sendTuringOrder(STATE_TURN_RIGHT);
+	//goStartTogether(FRONT_DIRECTION);
+	goToLocation(FRONT_DIRECTION, TURING_DISTANCE);
+	sendTuringOrder(STATE_TURN_RIGHT);
 	
-	//goToLocation(FRONT_DIRECTION, 0.30);
+	goToLocation(FRONT_DIRECTION, 0.30);
 
 
 	
