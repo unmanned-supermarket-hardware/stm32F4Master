@@ -406,13 +406,13 @@ double  designFSpeed2(double FD, double FD_care,double iniTDistance)
 	double FDSMax = FD_MAX_SPEED;  // 规定的最大  前方速度  mm
 
 	double startSpeed = 0;
-	FD_care = FD_care + 0.06 ;	// 前方警戒距离，需要  低速前进
+	FD_care = FD_care + 0.10 ;	// 前方警戒距离，需要  低速前进
 
 
 
 	if ((iniTDistance >=FD) || (iniTDistance -FD)*1000 <100)
 		{
-			startSpeed = (iniTDistance -FD)*1000*5+FSpeed;
+			startSpeed = (iniTDistance -FD)*1000*2+FSpeed;
 	
 		}
 
@@ -448,11 +448,11 @@ double  designFSpeed2(double FD, double FD_care,double iniTDistance)
 **************************************************************************/
 void goToLocation(int direction,double needDistance)
 {
-
+	
 	
 	// 保证两车  处于 停止状态
-	AiwacMasterSendOrderCar1(CAR_STOP , STATE_STOP) ;
-	AiwacMasterSendOrderCar2(CAR_STOP , STATE_STOP) ;
+	//AiwacMasterSendOrderCar1(CAR_STOP , STATE_STOP) ;
+	//AiwacMasterSendOrderCar2(CAR_STOP , STATE_STOP) ;
 
 	//起步阶段，需要两车平行起步
 	goStartTogether(direction);
@@ -471,13 +471,25 @@ void goToLocation(int direction,double needDistance)
 void goStartTogether(int direction)
 {
 	double goalLocation = 0 ;
-	double TogetherGap = 0.01;
+	double TogetherGap = 0.02;
 
 	while(( Car1_moveState > 1 )|| (Car2_moveState > 1) ) //  当前有  小车在  转弯
 	{
 		printf("\r\nwaiting for turing,  Car1_moveState :%d,  Car2_moveState:%d ",Car1_moveState ,Car2_moveState );
 		delay_ms(50); //   等待转完
 	}
+
+	while (1)
+		{
+			if ((Car1_FDistance>0) && (Car2_FDistance>0))  //为获取到前方距离
+				{
+
+					break;
+				}
+
+			delay_ms(50);
+
+		}
 
 
 	AiwacMasterSendOrderCar1(CAR_STOP , STATE_STOP) ;
@@ -490,46 +502,107 @@ void goStartTogether(int direction)
 			
 			if (  (Car1_CorrectState  == 1) && ( Car2_CorrectState == 1) )//姿态校准  ok
 			{
-				printf("\r\n step1  goStartTogether correction ok ");
+				
 				break;
 			}
 
 		}
+	
+	printf("\r\n step1	goStartTogether correction ok");
+	
 
 	
 	//往前走
 	if (direction == FRONT_DIRECTION)
 		{
-			goalLocation = ((Car1_FDistance >Car2_FDistance)? Car1_FDistance:Car2_FDistance);
 
+			if(Car1_FDistance <Car2_FDistance)
+				{
+
+						goalLocation = Car1_FDistance;
+						printf("\r\n step1	goStartTogether : Car1_FDistance  is goal ");
+				}
+			else
+				{
+						goalLocation = Car2_FDistance;
+						printf("\r\n step1	goStartTogether : Car2_FDistance  is goal ");
+				}
 
 				
 			if (myabs_double(Car1_FDistance- goalLocation) <= TogetherGap)  // 车1是标准位置
 				{
-
+					printf("\r\n goStartTogether:study from car1 ");
+					
 					while (1)
 					{
-						delay_ms(50);
-						AiwacMasterSendOrderCar2(MIN_SPEED * 2, STATE_STRAIGHT) ;  
-						
+						delay_ms(80);
+	
+
 						if (myabs_double(Car2_FDistance- goalLocation) <= TogetherGap) // 车2 ok
 							{
+								printf("\r\n goStartTogether:CorrectState   ok");
+								AiwacMasterSendOrderCar2(CAR_STOP , STATE_STOP) ;
 								break;
 							}
+
+						
+						if( (Car2_FDistance)< goalLocation - TogetherGap) //走超了
+							{
+								AiwacMasterSendOrderCar2(-MIN_SPEED , STATE_STRAIGHT) ;
+								printf("\r\n goStartTogether:over");
+
+							}
+						else if ((Car2_FDistance)> 5*TogetherGap+ goalLocation) //还较远
+							{
+
+								AiwacMasterSendOrderCar2(3*MIN_SPEED , STATE_STRAIGHT) ; 
+								printf("\r\n goStartTogether:too far");
+							}
+						else if ((Car2_FDistance)> TogetherGap+ goalLocation) //还较远
+							{
+								AiwacMasterSendOrderCar2(MIN_SPEED , STATE_STRAIGHT) ; 
+								printf("\r\n goStartTogether:too  too far");
+							}
+
 					}
 				}
 			else
 				{
-				
+					printf("\r\ngoStartTogether: study from car2 ");
 					while (1)
 					{
-						delay_ms(50);
-						AiwacMasterSendOrderCar1(MIN_SPEED * 2, STATE_STRAIGHT) ;	
-						
+						delay_ms(80);
+
+						printf("\r\n Car1:Car1_CorrectState :%d,  Car1_FDistance:%f,   Car1_moveState:%d",Car1_CorrectState ,Car1_FDistance, Car1_moveState);
+						printf("\r\n Car2:Car2_CorrectState :%d,  Car2_FDistance:%f,   Car2_moveState:%d",Car2_CorrectState ,Car2_FDistance, Car2_moveState);
+
 						if (myabs_double(Car1_FDistance- goalLocation) <= TogetherGap) // 车1 ok
 							{
+								printf("\r\n goStartTogether:CorrectState   ok");
+								AiwacMasterSendOrderCar1(CAR_STOP , STATE_STOP) ;
 								break;
 							}
+
+						
+						if( (Car1_FDistance)< goalLocation - TogetherGap) //走超了
+							{
+								AiwacMasterSendOrderCar1(-MIN_SPEED , STATE_STRAIGHT) ;
+								printf("\r\n goStartTogether:over");
+
+							}
+						else if ((Car1_FDistance)> 5*TogetherGap+ goalLocation) //还较远
+							{
+
+								AiwacMasterSendOrderCar1(3*MIN_SPEED , STATE_STRAIGHT) ; 
+								printf("\r\n goStartTogether:too far");
+							}
+						else if ((Car1_FDistance)> TogetherGap+ goalLocation) //还较远
+							{
+								AiwacMasterSendOrderCar1(MIN_SPEED , STATE_STRAIGHT) ; 
+								printf("\r\n goStartTogether:too  too far");
+							}
+	
+
 					}
 
 
@@ -576,6 +649,12 @@ void goStartTogether(int direction)
 
 		*/
 		}
+		delay_ms(60);
+
+		AiwacMasterSendOrderCar1(CAR_STOP , STATE_STOP) ;
+		AiwacMasterSendOrderCar2(CAR_STOP , STATE_STOP) ;
+		delay_ms(1000);
+
 
 
 
@@ -640,12 +719,18 @@ void goGoalPosition(int direction,double needDistance)
 					delay_ms(50);
 
 
-					if ( ( myabs_double(Car1_FDistance- needDistance ) <  goalGAP ) || ( ( myabs_double(Car1_FDistance- needDistance ) <  goalGAP )) )
+					if (( ( myabs_double(Car1_FDistance- needDistance ) <  goalGAP*5 ) || ( ( myabs_double(Car2_FDistance- needDistance ) <  goalGAP*5 )) )
+
+					||((Car1_FDistance- needDistance )<0)  || (Car2_FDistance- needDistance ) <0)
 						{
 
 							// 到达目的位置
-							if ( ( myabs_double(Car1_FDistance- needDistance ) <  goalGAP ) && ( ( myabs_double(Car1_FDistance- needDistance ) <  goalGAP )) )
+							if ( ( myabs_double(Car1_FDistance- needDistance ) <  goalGAP ) && ( ( myabs_double(Car2_FDistance- needDistance ) <  goalGAP )) )
 								{
+
+
+									AiwacMasterSendOrderCar1(CAR_STOP , STATE_STOP) ;
+									AiwacMasterSendOrderCar2(CAR_STOP , STATE_STOP) ;
 									break;
 
 								}
@@ -731,6 +816,13 @@ void goGoalPosition(int direction,double needDistance)
 		}
 
 
+
+
+
+	AiwacMasterSendOrderCar1(CAR_STOP , STATE_STOP) ;
+	AiwacMasterSendOrderCar2(CAR_STOP , STATE_STOP) ;
+	delay_ms(1000);
+
 		//等校正
 	while (1) 
 		{
@@ -754,8 +846,14 @@ void sendTuringOrder(int Left_or_Right)
 	//	转弯的  方向 要看 在 超市哪边
 	AiwacMasterSendOrderCar1(CAR_STOP , Left_or_Right) ;
 	AiwacMasterSendOrderCar2(CAR_STOP , Left_or_Right) ;
-	delay_ms(500);
-	printf("\r\nturing");
+	delay_ms(100);
+
+	while((( Car1_moveState > 1 )|| (Car2_moveState > 1) ))
+		{
+
+			printf("\r\nwaiting for turing,  Car1_moveState :%d,  Car2_moveState:%d ",Car1_moveState ,Car2_moveState );
+		}
+	printf("\r\nturing  over");
 }
 
 

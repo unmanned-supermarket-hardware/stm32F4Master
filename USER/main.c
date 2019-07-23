@@ -47,13 +47,43 @@ int main(void)
 	
 	}
 
-	*/
-	goGoalPosition(FRONT_DIRECTION, TURING_DISTANCE);
-	sendTuringOrder(STATE_TURN_RIGHT);
 	
-	goGoalPosition(FRONT_DIRECTION, 0.30);
+
+	*/
+
+	while (1)
+		{
+			delay_ms(100); 
+			printf("\r\n waiting for data from cars");
+			printf("\r\n Car1:Car1_CorrectState :%d,  Car1_FDistance:%f,   Car1_moveState:%d",Car1_CorrectState ,Car1_FDistance, Car1_moveState);
+			printf("\r\n Car2:Car2_CorrectState :%d,  Car2_FDistance:%f,   Car2_moveState:%d",Car2_CorrectState ,Car2_FDistance, Car2_moveState);
+			
+			if( (Car1_CorrectState > -1) && (Car2_CorrectState > -1)) // 还未完全收到两小车的  数据
+			{
+				
+				break;
+			}
+
+		}
+
+	delay_ms(2000);// 等待车完全准备好
+
+	
+	
+	goStartTogether(FRONT_DIRECTION);
+	//goToLocation(FRONT_DIRECTION, TURING_DISTANCE);
+	//sendTuringOrder(STATE_TURN_RIGHT);
+	
+	//goToLocation(FRONT_DIRECTION, 0.30);
 
 
+	
+	while (1) 
+		{
+			delay_ms(50);
+			
+			printf("\r\n ok ");
+		}
 	
 }
 

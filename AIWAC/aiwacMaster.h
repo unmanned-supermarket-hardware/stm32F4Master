@@ -12,7 +12,7 @@
 #define MIN_SPEED 30  //小车 运动的最小速度   mm/s
 #define ACC_SPEED 150  //  小车的加速速度
 #define CAR_STOP 0  // 小车速度停止
-#define FD_MAX_SPEED 200  // 小车运动的 最大速度  mm/s
+#define FD_MAX_SPEED 500  // 小车运动的 最大速度  mm/s
 
 // 小车的运动状态
 #define STATE_STOP 0
