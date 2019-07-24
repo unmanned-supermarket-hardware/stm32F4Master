@@ -58,6 +58,46 @@ int fputc(int ch, FILE *f)
 #endif
  
 #if EN_USART1_RX   //如果使能了接收
+
+
+
+
+unsigned char const crc8_tab[256]  = 
+{ 
+	0x00,0x07,0x0E,0x09,0x1C,0x1B,0x12,0x15,0x38,0x3F,0x36,0x31,0x24,0x23,0x2A,0x2D, 
+	0x70,0x77,0x7E,0x79,0x6C,0x6B,0x62,0x65,0x48,0x4F,0x46,0x41,0x54,0x53,0x5A,0x5D, 
+	0xE0,0xE7,0xEE,0xE9,0xFC,0xFB,0xF2,0xF5,0xD8,0xDF,0xD6,0xD1,0xC4,0xC3,0xCA,0xCD, 
+	0x90,0x97,0x9E,0x99,0x8C,0x8B,0x82,0x85,0xA8,0xAF,0xA6,0xA1,0xB4,0xB3,0xBA,0xBD, 
+	0xC7,0xC0,0xC9,0xCE,0xDB,0xDC,0xD5,0xD2,0xFF,0xF8,0xF1,0xF6,0xE3,0xE4,0xED,0xEA, 
+	0xB7,0xB0,0xB9,0xBE,0xAB,0xAC,0xA5,0xA2,0x8F,0x88,0x81,0x86,0x93,0x94,0x9D,0x9A, 
+	0x27,0x20,0x29,0x2E,0x3B,0x3C,0x35,0x32,0x1F,0x18,0x11,0x16,0x03,0x04,0x0D,0x0A, 
+	0x57,0x50,0x59,0x5E,0x4B,0x4C,0x45,0x42,0x6F,0x68,0x61,0x66,0x73,0x74,0x7D,0x7A, 
+	0x89,0x8E,0x87,0x80,0x95,0x92,0x9B,0x9C,0xB1,0xB6,0xBF,0xB8,0xAD,0xAA,0xA3,0xA4, 
+	0xF9,0xFE,0xF7,0xF0,0xE5,0xE2,0xEB,0xEC,0xC1,0xC6,0xCF,0xC8,0xDD,0xDA,0xD3,0xD4, 
+	0x69,0x6E,0x67,0x60,0x75,0x72,0x7B,0x7C,0x51,0x56,0x5F,0x58,0x4D,0x4A,0x43,0x44, 
+	0x19,0x1E,0x17,0x10,0x05,0x02,0x0B,0x0C,0x21,0x26,0x2F,0x28,0x3D,0x3A,0x33,0x34, 
+	0x4E,0x49,0x40,0x47,0x52,0x55,0x5C,0x5B,0x76,0x71,0x78,0x7F,0x6A,0x6D,0x64,0x63, 
+	0x3E,0x39,0x30,0x37,0x22,0x25,0x2C,0x2B,0x06,0x01,0x08,0x0F,0x1A,0x1D,0x14,0x13,
+	0xAE,0xA9,0xA0,0xA7,0xB2,0xB5,0xBC,0xBB,0x96,0x91,0x98,0x9F,0x8A,0x8D,0x84,0x83, 
+	0xDE,0xD9,0xD0,0xD7,0xC2,0xC5,0xCC,0xCB,0xE6,0xE1,0xE8,0xEF,0xFA,0xFD,0xF4,0xF3 
+}; 
+
+
+unsigned	char crc8_calculate(unsigned char * ucPtr, unsigned char ucLen) 
+{ 
+	unsigned char ucCRC8 = 0;
+
+	while(ucLen--)
+	{ 
+		ucCRC8 = crc8_tab[ucCRC8^(*ucPtr++)]; 
+	} 
+	return (~ucCRC8)&0xFF; 
+
+} 
+
+
+
+
 //串口1中断服务程序
 //注意,读取USARTx->SR能避免莫名其妙的错误   	
 u8 USART_RX_BUF[USART_REC_LEN];     //接收缓冲,最大USART_REC_LEN个字节.
@@ -209,7 +249,7 @@ USART_Cmd(USART2, ENABLE);                    //使能串口
 }
 
 
-
+/*
 u8 UASRT2 = 0;
 char USART2_startMS = '+';	//保存协议前两字节			#！
 u8 USART2_startGetMS = 0;		// 0：还不能开始，1：接收  数据长度位 2：开始接收json串
@@ -231,30 +271,34 @@ void USART2StateTo0(void)
 	uart2GetLen = 0;
 }
 
-/*
+*/
+
+
 int USART2_dataLen = -1; // json字符串的长度
 u8 USART2_jsonBuF[500]; // 在中断的时候 存储接收的json 字符串
 int USART2_jsonDataCount = 0; //当前接收的 json 字符串数
-u8 zone_1_car1_jsonParseBuF[500]; //解析的时候用 存储接收的json 字符串，防止跟中断共用一个 字符串 读写 出问题
-u8 zone_1_car2_jsonParseBuF[500]; //解析的时候用 存储接收的json 字符串，防止跟中断共用一个 字符串 读写 出问题
-
+u8 USART2_jsonParseBuF[300]; 
 int uart2ByteNum = 0; // 串口2 接收符合协议的字节数目
-int MSFrom = 0; // 数据来自哪
+u8 uart2CRC =0;
 
 void USART2StateTo0(void)
 {
-// 恢复初始化
-USART2_dataLen = -1; // json字符串的长度
-memset(USART2_jsonBuF, 0, sizeof(USART2_jsonBuF));
-USART2_jsonDataCount = 0; //当前接收的 json 字符串数
-uart2ByteNum = 0;
-MSFrom = 0;
+	// 恢复初始化
+	USART2_dataLen = -1; // json字符串的长度
+	memset(USART2_jsonBuF, 0, sizeof(USART2_jsonBuF));
+	USART2_jsonDataCount = 0; //当前接收的 json 字符串数
+	uart2ByteNum = 0;
+	uart2CRC =0;
+
 }
-*/
+
 void USART2_IRQHandler(void)                	//串口2中断服务程序
 {
 
 	u8 temp;
+
+	
+	/*
 
 	if(USART_GetITStatus(USART2, USART_IT_RXNE) != RESET) 
 	{
@@ -343,12 +387,12 @@ void USART2_IRQHandler(void)                	//串口2中断服务程序
 
 
 
-
+*/
 
 
 
 		
-/*
+
 	if(USART_GetITStatus(USART2, USART_IT_RXNE) != RESET)
 	{
 		temp =USART2->DR;
@@ -367,95 +411,100 @@ void USART2_IRQHandler(void)                	//串口2中断服务程序
 		// 第二个字节
 		if (uart2ByteNum == 1)
 		{
-		if (temp == '!')
-		{
-		uart2ByteNum++;
-		//printf("\r\n get 2!!");
-		return ;
+			if (temp == '!')
+			{
+				uart2ByteNum++;
+				//printf("\r\n get 2!!");
+				return ;
+			}
+			else
+			{
+				uart2ByteNum = 0;
+				//printf("\r\n get 2 FAILED!!");
+				return ;
+			}
 		}
-		else
-		{
-		uart2ByteNum = 0;
-		//printf("\r\n get 2 FAILED!!");
-		return ;
-		}
-		}
-		// 接收 TO
-		// 第三个字节
+		
+		
+		// 接收 json Len 高字节
+		// 第3个字节
 		if (uart2ByteNum == 2)
 		{
-		if (temp == MYSELF_ROLE)
-		{
-		uart2ByteNum++;
-		//printf("\r\n get my data!!");
-		return ;
+			USART2_dataLen = temp*256;
+			uart2ByteNum++;
+			return ;
 		}
-		else
-		{
-		uart2ByteNum = 0;
-		//printf("\r\n get 3 FAILED!!");
-		return ;
-		}
-		}
-		// 接收 FROM
-		// 第四个字节
+		
+		// 接收 json Len 低字节
+		// 第4个字节
 		if (uart2ByteNum == 3)
 		{
-		if (temp < SYS_MAX_FLAG)
-		{
-		MSFrom = temp;
-		uart2ByteNum++;
-		return ;
+			USART2_dataLen = USART2_dataLen + temp;
+			uart2ByteNum++;
+			//printf("\r\n get 6!!");
+			return ;
 		}
-		else
-		{
-		uart2ByteNum = 0;
-		return ;
-		}
-		}
-		// 接收 json Len 高字节
-		// 第五个字节
+		
+		// 开始接收
 		if (uart2ByteNum == 4)
 		{
-		USART2_dataLen = temp*256;
-		uart2ByteNum++;
-		return ;
-		}
-		// 接收 json Len 低字节
-		// 第六个字节
-		if (uart2ByteNum == 5)
-		{
-		USART2_dataLen = USART2_dataLen + temp;
-		uart2ByteNum++;
-		//printf("\r\n get 6!!");
-		return ;
-		}
-		// 开始接收
-		if (uart2ByteNum == 6)
-		{
-		USART2_jsonBuF[USART2_jsonDataCount] = temp;
-		USART2_jsonDataCount++;
-		if (USART2_jsonDataCount == USART2_dataLen) // 本次接收完毕
-		{
+			USART2_jsonDataCount++;
+			
+			if (USART2_jsonDataCount>250)  //  可能的超出情况
+			{
+				USART2StateTo0();
+				return;
+			}
+						
+			if (USART2_jsonDataCount <= USART2_dataLen)
+			{
+				USART2_jsonBuF[USART2_jsonDataCount-1] = temp;
+				return;
+			}
 
-		// 针对不同的角色 进行 操作
-		if (MSFrom == ZONE_1_CAR_1)
-		{
-		strcpy(zone_1_car1_jsonParseBuF, USART2_jsonBuF);
-		}
 
-		if (MSFrom == ZONE_1_CAR_2)
-		{
-		strcpy(zone_1_car2_jsonParseBuF, USART2_jsonBuF);
-		}
-		//printf("\r\zone_1_car1_jsonParseBuF:%s",zone_1_car1_jsonParseBuF);
-		USART2StateTo0();
-		}
-		return ;
-		}
+			// 末尾第一次校验标签
+			if (USART2_jsonDataCount ==(USART2_dataLen + 1))
+				{
+					if (temp != '*')
+						{
+							USART2StateTo0();
+							return;
+						}
+				}
 
-	}
-*/
+
+			// 末尾CRC
+			if (USART2_jsonDataCount ==(USART2_dataLen + 2))
+				{
+					uart2CRC = temp;
+				}
+
+
+			// 末尾第二次校验标签
+			if (USART2_jsonDataCount ==(USART2_dataLen + 3))
+				{
+					if (temp != '+')
+					{
+						USART2StateTo0();
+						return;
+					}
+					else
+					{
+						if ( uart2CRC == crc8_calculate(USART2_jsonBuF, USART2_dataLen) )
+							{
+								memset(USART2_jsonParseBuF, 0, sizeof(USART2_jsonParseBuF));
+								strcpy(USART2_jsonParseBuF,USART2_jsonBuF);
+								PaserCar1_State();
+							}
+						
+						USART2StateTo0();	
+						
+					}
+		
+				}
+			return ;
+		}
 
 	}
 
@@ -546,28 +595,25 @@ void uart3_init(u32 bound){
 	
 }
 
-u8 UASRT3 = 0;
-char USART3_startMS = '+';	//保存协议前两字节			#！
-u8 USART3_startGetMS = 0;		// 0：还不能开始，1：接收  数据长度位 2：开始接收json串
-int	USART3_dataLen = -1;		// json字符串的长度
-u8 USART3_jsonBuF[300]; 			// 在中断的时候 存储接收的json 字符串
-int USART3_jsonDataCount = 0;  //当前接收的  json 字符串数
-u8 USART3_jsonParseBuF[300]; 			//解析的时候用 存储接收的json 字符串，防止跟中断共用一个  字符串 读写 出问题
-int uart3GetLen = 0; 
 
+int USART3_dataLen = -1; // json字符串的长度
+u8 USART3_jsonBuF[500]; // 在中断的时候 存储接收的json 字符串
+int USART3_jsonDataCount = 0; //当前接收的 json 字符串数
+u8 USART3_jsonParseBuF[300]; 
+int uart3ByteNum = 0; // 串口2 接收符合协议的字节数目
+u8 uart3CRC =0;
 
-void  USART3StateTo0(void )
+void USART3StateTo0(void)
 {
 	// 恢复初始化
-	USART3_startMS = '+';	//保存协议前两字节			#！
-	USART3_startGetMS = 0;	// 0：还不能开始，1：接收  数据长度位 2：开始接收json串
-	USART3_dataLen = -1;		// json字符串的长度
+	USART3_dataLen = -1; // json字符串的长度
 	memset(USART3_jsonBuF, 0, sizeof(USART3_jsonBuF));
-	USART3_jsonDataCount = 0;	//当前接收的  json 字符串数
-	uart3GetLen = 0;
-
+	USART3_jsonDataCount = 0; //当前接收的 json 字符串数
+	uart3ByteNum = 0;
+	uart3CRC =0;
 
 }
+
 
 void USART3_IRQHandler(void)                	//串口3中断服务程序
 {
@@ -575,62 +621,63 @@ void USART3_IRQHandler(void)                	//串口3中断服务程序
 	u8 temp;
 
 
-	if(USART_GetITStatus(USART3, USART_IT_RXNE) != RESET) 
+	if(USART_GetITStatus(USART2, USART_IT_RXNE) != RESET)
 	{
-		
 		temp =USART3->DR;
 
-			// 判断协议数据的开头
-	
-		if (USART3_startGetMS == 0)
+		// 第一个字节
+		if (uart3ByteNum == 0)
 		{
 			if (temp == '#')
 			{
-				USART3_startMS = '#';	
-				uart3GetLen++;
+				uart3ByteNum++;
+				//printf("\r\n get 1!!");
 			}
-			else if ((temp == '!') && (USART3_startMS == '#') && (uart3GetLen == 1)) 
+			return ;
+		}
+		
+		// 第二个字节
+		if (uart3ByteNum == 1)
+		{
+			if (temp == '!')
 			{
-				USART3_startGetMS = 1;// 协议标志 前两字节 接收ok	
-			}else if (USART3_startMS == '#')
+				uart3ByteNum++;
+				//printf("\r\n get 2!!");
+				return ;
+			}
+			else
 			{
-				USART3StateTo0();
+				uart3ByteNum = 0;
+				//printf("\r\n get 2 FAILED!!");
+				return ;
 			}
 		}
-		else if (USART3_startGetMS == 1)// 接收 协议数据  内 json 字符串的长度
+		
+		
+		// 接收 json Len 高字节
+		// 第3个字节
+		if (uart3ByteNum == 2)
 		{
-			if (USART3_dataLen == -1)
-			{
-				USART3_dataLen = temp*256;
-			}else if(USART3_dataLen != -1)
-			{
-				USART3_dataLen = USART3_dataLen + temp;
-				USART3_startGetMS =2;				
-			}		
-		}else if (USART3_startGetMS == 2)	// // 开始接收	Json 串
+			USART3_dataLen = temp*256;
+			uart3ByteNum++;
+			return ;
+		}
+		
+		// 接收 json Len 低字节
+		// 第4个字节
+		if (uart3ByteNum == 3)
 		{
-		/*	
-			USART3_jsonBuF[USART3_jsonDataCount] = temp;
+			USART3_dataLen = USART3_dataLen + temp;
+			uart3ByteNum++;
+			//printf("\r\n get 6!!");
+			return ;
+		}
+		
+		// 开始接收
+		if (uart3ByteNum == 4)
+		{
 			USART3_jsonDataCount++;
 			
-			if (USART3_jsonDataCount == USART3_dataLen)  //  本次接收完毕
-			{
-				memset(USART3_jsonParseBuF, 0, sizeof(USART3_jsonParseBuF));
-				strcpy(USART3_jsonParseBuF, USART3_jsonBuF);
-				USART3StateTo0();	
-				PaserCar2_State();
-			}
-
-			if (USART3_jsonDataCount>250)  //  可能的超出情况
-			{
-				USART3StateTo0();
-
-			}
-		*/
-
-			
-			USART3_jsonDataCount++;
-						
 			if (USART3_jsonDataCount>250)  //  可能的超出情况
 			{
 				USART3StateTo0();
@@ -654,8 +701,16 @@ void USART3_IRQHandler(void)                	//串口3中断服务程序
 						}
 				}
 
-			// 末尾第二次校验标签
+
+			// 末尾CRC
 			if (USART3_jsonDataCount ==(USART3_dataLen + 2))
+				{
+					uart3CRC = temp;
+				}
+
+
+			// 末尾第二次校验标签
+			if (USART3_jsonDataCount ==(USART3_dataLen + 3))
 				{
 					if (temp != '+')
 					{
@@ -664,15 +719,20 @@ void USART3_IRQHandler(void)                	//串口3中断服务程序
 					}
 					else
 					{
-						memset(USART3_jsonParseBuF, 0, sizeof(USART3_jsonParseBuF));
-						strcpy(USART3_jsonParseBuF,USART3_jsonBuF);
+						if ( uart3CRC == crc8_calculate(USART3_jsonBuF, USART3_dataLen) )
+							{
+								memset(USART3_jsonParseBuF, 0, sizeof(USART3_jsonParseBuF));
+								strcpy(USART3_jsonParseBuF,USART3_jsonBuF);
+								PaserCar2_State();
+							}
+						
 						USART3StateTo0();	
-						PaserCar2_State();
+						
 					}
 		
 				}
+			return ;
 		}
-
 
 	}
 

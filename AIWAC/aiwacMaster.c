@@ -181,10 +181,11 @@ void AiwacMasterSendOrderCar1(double X_V, int moveState)
 	strncpy(strSend+4,strJson,jsonSize);
 	
 	strSend[jsonSize+4] = '*';
-	strSend[jsonSize+5] = '+';
+	strSend[jsonSize+5] = crc8_calculate(strJson, jsonSize);
+	strSend[jsonSize+6] = '+';
 
 	// 需要打开
-	usart2_sendString(strSend,6 + jsonSize);
+	usart2_sendString(strSend,7 + jsonSize);
 	myfree(strJson);
 
 
@@ -228,9 +229,10 @@ void AiwacMasterSendOrderCar2(double X_V, int moveState)
 
 			
 		strSend[jsonSize+4] = '*';
-		strSend[jsonSize+5] = '+';
+		strSend[jsonSize+5] = crc8_calculate(strJson, jsonSize);
+		strSend[jsonSize+6] = '+';
 		// 需要打开
-		usart3_sendString(strSend,6 + jsonSize);
+		usart3_sendString(strSend,7 + jsonSize);
 		myfree(strJson);
 
 

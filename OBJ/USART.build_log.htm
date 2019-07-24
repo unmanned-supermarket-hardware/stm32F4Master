@@ -26,32 +26,36 @@ Project File Date:  07/23/2019
 
 <h2>Output:</h2>
 Build target 'USART'
-compiling usart.c...
-..\SYSTEM\usart\usart.c(229): warning:  #223-D: function "memset" declared implicitly
-        memset(USART2_jsonBuF, 0, sizeof(USART2_jsonBuF));
-..\SYSTEM\usart\usart.c(332): warning:  #223-D: function "memset" declared implicitly
-                                                memset(USART2_jsonParseBuF, 0, sizeof(USART2_jsonParseBuF));
-..\SYSTEM\usart\usart.c(333): warning:  #223-D: function "strcpy" declared implicitly
-                                                strcpy(USART2_jsonParseBuF,USART2_jsonBuF);
-..\SYSTEM\usart\usart.c(335): warning:  #223-D: function "PaserCar1_State" declared implicitly
-                                                PaserCar1_State();
-..\SYSTEM\usart\usart.c(565): warning:  #223-D: function "memset" declared implicitly
-        memset(USART3_jsonBuF, 0, sizeof(USART3_jsonBuF));
-..\SYSTEM\usart\usart.c(667): warning:  #223-D: function "memset" declared implicitly
-                                                memset(USART3_jsonParseBuF, 0, sizeof(USART3_jsonParseBuF));
-..\SYSTEM\usart\usart.c(668): warning:  #223-D: function "strcpy" declared implicitly
-                                                strcpy(USART3_jsonParseBuF,USART3_jsonBuF);
-..\SYSTEM\usart\usart.c(670): warning:  #223-D: function "PaserCar2_State" declared implicitly
-                                                PaserCar2_State();
-..\SYSTEM\usart\usart.c(758): warning:  #550-D: variable "temp" was set but never used
-        u8 temp;
-..\SYSTEM\usart\usart.c(862): warning:  #550-D: variable "temp" was set but never used
-        u8 temp;
-..\SYSTEM\usart\usart.c: 10 warnings, 0 errors
+compiling aiwacMaster.c...
+..\AIWAC\aiwacMaster.c(31): warning:  #167-D: argument of type "u8 *" is incompatible with parameter of type "const char *"
+        root = cJSON_Parse(USART2_jsonParseBuF);
+..\AIWAC\aiwacMaster.c(87): warning:  #167-D: argument of type "u8 *" is incompatible with parameter of type "const char *"
+        root = cJSON_Parse(USART3_jsonParseBuF);
+..\AIWAC\aiwacMaster.c(176): warning:  #223-D: function "strlen" declared implicitly
+        jsonSize = strlen(strJson);
+..\AIWAC\aiwacMaster.c(181): warning:  #223-D: function "strncpy" declared implicitly
+        strncpy(strSend+4,strJson,jsonSize);
+..\AIWAC\aiwacMaster.c(184): warning:  #167-D: argument of type "char *" is incompatible with parameter of type "unsigned char *"
+        strSend[jsonSize+5] = crc8_calculate(strJson, jsonSize);
+..\AIWAC\aiwacMaster.c(222): warning:  #223-D: function "strlen" declared implicitly
+                jsonSize = strlen(strJson);
+..\AIWAC\aiwacMaster.c(227): warning:  #223-D: function "strncpy" declared implicitly
+                strncpy(strSend+4,strJson,jsonSize);
+..\AIWAC\aiwacMaster.c(232): warning:  #167-D: argument of type "char *" is incompatible with parameter of type "unsigned char *"
+                strSend[jsonSize+5] = crc8_calculate(strJson, jsonSize);
+..\AIWAC\aiwacMaster.c(497): warning:  #223-D: function "delay_ms" declared implicitly
+                delay_ms(50); //   µÈ´ý×ªÍê
+..\AIWAC\aiwacMaster.c(504): warning:  #223-D: function "delay_ms" declared implicitly
+        delay_ms(1000);
+..\AIWAC\aiwacMaster.c(718): warning:  #223-D: function "delay_ms" declared implicitly
+        delay_ms(300);
+..\AIWAC\aiwacMaster.c(894): warning:  #223-D: function "delay_ms" declared implicitly
+        delay_ms(1000);
+..\AIWAC\aiwacMaster.c: 12 warnings, 0 errors
 linking...
-Program Size: Code=26130 RO-data=1230 RW-data=140 ZI-data=22044  
+Program Size: Code=26210 RO-data=1486 RW-data=132 ZI-data=22444  
 FromELF: creating hex file...
-"..\OBJ\USART.axf" - 0 Error(s), 10 Warning(s).
+"..\OBJ\USART.axf" - 0 Error(s), 12 Warning(s).
 
 <h2>Collection of Component include folders:</h2>
   C:\0MySpace\aiwac_project\nobodySuperMarcket\STM32Master\stm32F4Master\USER\RTE
