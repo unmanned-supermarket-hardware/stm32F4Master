@@ -29,8 +29,14 @@ void PaserCar1_State(void)
 	}
 	
 	root = cJSON_Parse(USART2_jsonParseBuF);
+	
+	if (!root) 
+		{
+			printf("Error before: [%s]\n",cJSON_GetErrorPtr());
+		return;
+	}
 
-	orderValue = cJSON_GetObjectItem(root, "CorrectState");  //  自校准情况
+	orderValue = cJSON_GetObjectItem(root, "Co");  //  自校准情况
 	if (!orderValue) {
 	    //printf("get name faild !\n");
 	    //printf("Error before: [%s]\n", cJSON_GetErrorPtr());
@@ -39,16 +45,17 @@ void PaserCar1_State(void)
 	Car1_CorrectState = orderValue->valueint;  //自校准情况 
 
 
-	orderValue = cJSON_GetObjectItem(root, "FDistance");  //  前方距离
+	orderValue = cJSON_GetObjectItem(root, "FD");  //  前方距离
 	if (!orderValue) {
 	   // printf("get name faild !\n");
 	   // printf("Error before: [%s]\n", cJSON_GetErrorPtr());
 	   goto end;
 	}
 	Car1_FDistance = orderValue->valuedouble;  // 前方距离
+	//printf("\r\nCar1_F:%f",Car1_FDistance);
 
 
-	orderValue = cJSON_GetObjectItem(root, "moveState");  //  小车的运动状态指令
+	orderValue = cJSON_GetObjectItem(root, "mo");  //  小车的运动状态指令
 	if (!orderValue) {
 	   // printf("get name faild !\n");
 	   // printf("Error before: [%s]\n", cJSON_GetErrorPtr());
@@ -78,8 +85,14 @@ void PaserCar2_State(void)
 	}
 	
 	root = cJSON_Parse(USART3_jsonParseBuF);
+	
+	if (!root) 
+	{
+		printf("Error before: [%s]\n",cJSON_GetErrorPtr());
+		return;
+	}
 
-	orderValue = cJSON_GetObjectItem(root, "CorrectState");  //  自校准情况
+	orderValue = cJSON_GetObjectItem(root, "Co");  //  自校准情况
 	if (!orderValue) {
 	    //printf("get name faild !\n");
 	    //printf("Error before: [%s]\n", cJSON_GetErrorPtr());
@@ -88,16 +101,17 @@ void PaserCar2_State(void)
 	Car2_CorrectState = orderValue->valueint;  //自校准情况 
 
 
-	orderValue = cJSON_GetObjectItem(root, "FDistance");  //  前方距离
+	orderValue = cJSON_GetObjectItem(root, "FD");  //  前方距离
 	if (!orderValue) {
 	   // printf("get name faild !\n");
 	   // printf("Error before: [%s]\n", cJSON_GetErrorPtr());
 	   goto end;
 	}
 	Car2_FDistance = orderValue->valuedouble;  // 前方距离
+	//printf("\r\nPaser	Car2_F:%f",Car2_FDistance );
 
 
-	orderValue = cJSON_GetObjectItem(root, "moveState");  //  小车的运动状态指令
+	orderValue = cJSON_GetObjectItem(root, "mo");  //  小车的运动状态指令
 	if (!orderValue) {
 	   // printf("get name faild !\n");
 	   // printf("Error before: [%s]\n", cJSON_GetErrorPtr());
@@ -146,14 +160,17 @@ void AiwacMasterSendOrderCar1(double X_V, int moveState)
 	root=cJSON_CreateObject();
 
 
-	cJSON_AddNumberToObject(root,"from", 3);
-	cJSON_AddNumberToObject(root,"to", 2);
-	cJSON_AddNumberToObject(root,"msType", 1);
 	cJSON_AddNumberToObject(root,"X_V", X_V);
-	cJSON_AddNumberToObject(root,"moveState", moveState);
+	cJSON_AddNumberToObject(root,"mo", moveState);
 
 
-	strJson=cJSON_Print(root); 
+	//strJson=cJSON_Print(root); 
+	//printf("\r\n cJSON_Print Len:%d",strlen(strJson));
+
+	strJson  =cJSON_PrintUnformatted(root);
+
+	//printf("\r\n cJSON_PrintUnformatted Len:%d",strlen(strJson));
+	
 	cJSON_Delete(root); 
 	
 	jsonSize = strlen(strJson);
@@ -162,9 +179,12 @@ void AiwacMasterSendOrderCar1(double X_V, int moveState)
 	strSend[3] = jsonSize;
 
 	strncpy(strSend+4,strJson,jsonSize);
+	
+	strSend[jsonSize+4] = '*';
+	strSend[jsonSize+5] = '+';
 
 	// 需要打开
-	usart2_sendString(strSend,4 + jsonSize);
+	usart2_sendString(strSend,6 + jsonSize);
 	myfree(strJson);
 
 
@@ -190,15 +210,12 @@ void AiwacMasterSendOrderCar2(double X_V, int moveState)
 	
 		root=cJSON_CreateObject();
 	
-	
-		cJSON_AddNumberToObject(root,"from", 3);
-		cJSON_AddNumberToObject(root,"to", 2);
-		cJSON_AddNumberToObject(root,"msType", 1);
 		cJSON_AddNumberToObject(root,"X_V", X_V);
-		cJSON_AddNumberToObject(root,"moveState", moveState);
+		cJSON_AddNumberToObject(root,"mo", moveState);
 	
 	
-		strJson=cJSON_Print(root); 
+		//strJson=cJSON_Print(root); 
+		strJson  =cJSON_PrintUnformatted(root);
 		cJSON_Delete(root); 
 		
 		jsonSize = strlen(strJson);
@@ -207,9 +224,13 @@ void AiwacMasterSendOrderCar2(double X_V, int moveState)
 		strSend[3] = jsonSize;
 	
 		strncpy(strSend+4,strJson,jsonSize);
-	
+
+
+			
+		strSend[jsonSize+4] = '*';
+		strSend[jsonSize+5] = '+';
 		// 需要打开
-		usart3_sendString(strSend,4 + jsonSize);
+		usart3_sendString(strSend,6 + jsonSize);
 		myfree(strJson);
 
 
@@ -448,11 +469,6 @@ double  designFSpeed2(double FD, double FD_care,double iniTDistance)
 **************************************************************************/
 void goToLocation(int direction,double needDistance)
 {
-	
-	
-	// 保证两车  处于 停止状态
-	//AiwacMasterSendOrderCar1(CAR_STOP , STATE_STOP) ;
-	//AiwacMasterSendOrderCar2(CAR_STOP , STATE_STOP) ;
 
 	//起步阶段，需要两车平行起步
 	goStartTogether(direction);
@@ -487,7 +503,7 @@ void goStartTogether(int direction)
 
 	while (1)
 		{
-			if ((Car1_FDistance>0) && (Car2_FDistance>0))  //为获取到前方距离
+			if ((Car1_FDistance>0) && (Car2_FDistance>0))  //未获取到前方距离
 				{
 
 					break;
@@ -557,10 +573,10 @@ void goStartTogether(int direction)
 								printf("\r\n goStartTogether:over");
 
 							}
-						else if ((Car2_FDistance)> 6*TogetherGap+ goalLocation) //还较远
+						else if ((Car2_FDistance)> 4*TogetherGap+ goalLocation) //还较远
 							{
 
-								AiwacMasterSendOrderCar2(3*MIN_SPEED , STATE_STRAIGHT) ; 
+								AiwacMasterSendOrderCar2(4*MIN_SPEED , STATE_STRAIGHT) ; 
 								printf("\r\n goStartTogether:too far");
 							}
 						else if ((Car2_FDistance)> TogetherGap+ goalLocation) //较近
@@ -595,10 +611,10 @@ void goStartTogether(int direction)
 								printf("\r\n goStartTogether:over");
 
 							}
-						else if ((Car1_FDistance)> 6*TogetherGap+ goalLocation) //还较远
+						else if ((Car1_FDistance)> 4*TogetherGap+ goalLocation) //还较远
 							{
 
-								AiwacMasterSendOrderCar1(3*MIN_SPEED , STATE_STRAIGHT) ; 
+								AiwacMasterSendOrderCar1(4*MIN_SPEED , STATE_STRAIGHT) ; 
 								printf("\r\n goStartTogether:too far");
 							}
 						else if ((Car1_FDistance)> TogetherGap+ goalLocation) //较近
@@ -658,7 +674,7 @@ void goStartTogether(int direction)
 
 		AiwacMasterSendOrderCar1(CAR_STOP , STATE_STOP) ;
 		AiwacMasterSendOrderCar2(CAR_STOP , STATE_STOP) ;
-		delay_ms(300);
+		delay_ms(1000);
 
 
 
