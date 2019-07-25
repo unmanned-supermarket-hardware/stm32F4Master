@@ -182,7 +182,7 @@ void AiwacMasterSendOrderCar1(double X_V, int moveState)
 	
 	strSend[jsonSize+4] = '*';
 	strSend[jsonSize+5] = crc8_calculate(strJson, jsonSize);
-	strSend[jsonSize+6] = '+';
+	strSend[jsonSize+6] = '&';
 
 	// 需要打开
 	usart2_sendString(strSend,7 + jsonSize);
@@ -203,7 +203,7 @@ void AiwacMasterSendOrderCar2(double X_V, int moveState)
 	u16 jsonSize;
 		cJSON *root;
 		char *strJson;
-		char strSend[300];
+		u8 strSend[300];
 		
 		strSend[0] = '#';
 		strSend[1] = '!';
@@ -230,7 +230,7 @@ void AiwacMasterSendOrderCar2(double X_V, int moveState)
 			
 		strSend[jsonSize+4] = '*';
 		strSend[jsonSize+5] = crc8_calculate(strJson, jsonSize);
-		strSend[jsonSize+6] = '+';
+		strSend[jsonSize+6] = '&';
 		// 需要打开
 		usart3_sendString(strSend,7 + jsonSize);
 		myfree(strJson);
@@ -512,6 +512,7 @@ void goStartTogether(int direction)
 				}
 
 			delay_ms(50);
+			printf("\r\n waiting	goStartTogether get FDistance");
 
 		}
 
@@ -528,6 +529,7 @@ void goStartTogether(int direction)
 				
 				break;
 			}
+			printf("\r\n waiting	goStartTogether correction ");
 
 		}
 	
@@ -823,11 +825,11 @@ void goGoalPosition(int direction,double NeedDistance)
 						}
 					else // 未到目标位置
 						{
-							if( myabs_double(Car1_FDistance - Car2_FDistance ) < goalGAP)  //  两车的	前进 距离ok
+							if( myabs_double(Car1_FDistance - Car2_FDistance ) < goalGAP*4)  //  两车的	前进 距离ok
 							{
 								// 下发  继续 默认前进 
-								AiwacMasterSendOrderCar1(designFSpeed2(Car1_FDistance, needDistance,iniTDistance) , STATE_STRAIGHT) ;
-								AiwacMasterSendOrderCar2(designFSpeed2(Car2_FDistance, needDistance,iniTDistance) , STATE_STRAIGHT) ;
+								AiwacMasterSendOrderCar1(designFSpeed2((Car1_FDistance+Car2_FDistance)/2, needDistance,iniTDistance) , STATE_STRAIGHT) ;
+								AiwacMasterSendOrderCar2(designFSpeed2((Car1_FDistance+Car2_FDistance)/2, needDistance,iniTDistance) , STATE_STRAIGHT) ;
 								printf("\r\ngo on straight");
 							}
 							else // 两车的  前进 距离  no
@@ -891,13 +893,37 @@ void sendTuringOrder(int Left_or_Right)
 	//	转弯的  方向 要看 在 超市哪边
 	AiwacMasterSendOrderCar1(CAR_STOP , Left_or_Right) ;
 	AiwacMasterSendOrderCar2(CAR_STOP , Left_or_Right) ;
-	delay_ms(1000);
+	delay_ms(120);
 
+	//若未进入转弯
+	while ((Car2_moveState <2 ) || (Car1_moveState <2 ) )  //有车未转弯
+		{
+
+			
+			if 	(Car1_moveState <2 )
+				{
+						AiwacMasterSendOrderCar1(CAR_STOP , Left_or_Right) ;
+				}
+
+						
+			if 	(Car2_moveState <2 )
+				{
+						AiwacMasterSendOrderCar2(CAR_STOP , Left_or_Right) ;
+				}
+			delay_ms(70);
+			
+		}
+
+	
+	// 检查  是否结束
 	while((( Car1_moveState > 1 )|| (Car2_moveState > 1) ))
 		{
 
 			printf("\r\nwaiting for turing,  Car1_moveState :%d,  Car2_moveState:%d ",Car1_moveState ,Car2_moveState );
+			delay_ms(10);
 		}
+
+	
 	printf("\r\nturing  over");
 }
 

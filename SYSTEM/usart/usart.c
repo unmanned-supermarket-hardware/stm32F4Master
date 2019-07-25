@@ -198,8 +198,6 @@ void USART1_IRQHandler(void)                	//串口1中断服务程序
 
 //串口2中断服务程序
 //串口发送缓存区 
-u8 USART2_TX_BUF[USART2_MAX_SEND_LEN]; //发送缓冲,最大USART2_MAX_SEND_LEN字节
-u8 USART2_RX_BUF[USART2_MAX_RECV_LEN]; //接收缓冲,最大USART2_MAX_RECV_LEN个字节.
 
 u16 USART2_RX_STA = 0;
 
@@ -275,7 +273,7 @@ void USART2StateTo0(void)
 
 
 int USART2_dataLen = -1; // json字符串的长度
-u8 USART2_jsonBuF[500]; // 在中断的时候 存储接收的json 字符串
+u8 USART2_jsonBuF[300]; // 在中断的时候 存储接收的json 字符串
 int USART2_jsonDataCount = 0; //当前接收的 json 字符串数
 u8 USART2_jsonParseBuF[300]; 
 int uart2ByteNum = 0; // 串口2 接收符合协议的字节数目
@@ -415,14 +413,16 @@ void USART2_IRQHandler(void)                	//串口2中断服务程序
 			{
 				uart2ByteNum++;
 				//printf("\r\n get 2!!");
-				return ;
+				
 			}
 			else
 			{
 				uart2ByteNum = 0;
 				//printf("\r\n get 2 FAILED!!");
-				return ;
+				
 			}
+
+			return ;
 		}
 		
 		
@@ -469,8 +469,9 @@ void USART2_IRQHandler(void)                	//串口2中断服务程序
 					if (temp != '*')
 						{
 							USART2StateTo0();
-							return;
 						}
+
+					return ;
 				}
 
 
@@ -478,16 +479,17 @@ void USART2_IRQHandler(void)                	//串口2中断服务程序
 			if (USART2_jsonDataCount ==(USART2_dataLen + 2))
 				{
 					uart2CRC = temp;
+					return ;
 				}
 
 
 			// 末尾第二次校验标签
 			if (USART2_jsonDataCount ==(USART2_dataLen + 3))
 				{
-					if (temp != '+')
+					if (temp != '&')
 					{
 						USART2StateTo0();
-						return;
+						
 					}
 					else
 					{
@@ -501,6 +503,8 @@ void USART2_IRQHandler(void)                	//串口2中断服务程序
 						USART2StateTo0();	
 						
 					}
+
+					return ;
 		
 				}
 			return ;
@@ -545,10 +549,7 @@ void usart2_sendString(char *data,u8 len)
 
 //串口3中断服务程序
 //串口发送缓存区 
-u8 USART3_TX_BUF[USART3_MAX_SEND_LEN]; //发送缓冲,最大USART3_MAX_SEND_LEN字节
-u8 USART3_RX_BUF[USART3_MAX_RECV_LEN]; //接收缓冲,最大USART3_MAX_RECV_LEN个字节.
     
-u16 USART3_RX_STA = 0;
 
 
 //初始化IO 串口3 
@@ -597,11 +598,11 @@ void uart3_init(u32 bound){
 
 
 int USART3_dataLen = -1; // json字符串的长度
-u8 USART3_jsonBuF[500]; // 在中断的时候 存储接收的json 字符串
+u8 USART3_jsonBuF[300]; // 在中断的时候 存储接收的json 字符串
 int USART3_jsonDataCount = 0; //当前接收的 json 字符串数
 u8 USART3_jsonParseBuF[300]; 
 int uart3ByteNum = 0; // 串口2 接收符合协议的字节数目
-u8 uart3CRC =0;
+unsigned	char uart3CRC =0;
 
 void USART3StateTo0(void)
 {
@@ -621,9 +622,13 @@ void USART3_IRQHandler(void)                	//串口3中断服务程序
 	u8 temp;
 
 
-	if(USART_GetITStatus(USART2, USART_IT_RXNE) != RESET)
+	if(USART_GetITStatus(USART3, USART_IT_RXNE) != RESET)
 	{
 		temp =USART3->DR;
+
+		//printf("%c",temp);
+		//return;
+		
 
 		// 第一个字节
 		if (uart3ByteNum == 0)
@@ -643,14 +648,16 @@ void USART3_IRQHandler(void)                	//串口3中断服务程序
 			{
 				uart3ByteNum++;
 				//printf("\r\n get 2!!");
-				return ;
+				
 			}
 			else
 			{
 				uart3ByteNum = 0;
-				//printf("\r\n get 2 FAILED!!");
-				return ;
+				//printf("\r\n get 2 FAILED!!  temp:%c",temp);
+				
 			}
+
+			return ;
 		}
 		
 		
@@ -669,36 +676,46 @@ void USART3_IRQHandler(void)                	//串口3中断服务程序
 		{
 			USART3_dataLen = USART3_dataLen + temp;
 			uart3ByteNum++;
-			//printf("\r\n get 6!!");
+			//printf("\r\n get 6!!USART3_dataLen:%d",USART3_dataLen);
 			return ;
 		}
 		
 		// 开始接收
 		if (uart3ByteNum == 4)
 		{
+		//printf("\r\n%c",temp);
 			USART3_jsonDataCount++;
 			
 			if (USART3_jsonDataCount>250)  //  可能的超出情况
 			{
 				USART3StateTo0();
+				//printf("\r\n get 7!!USART3_dataLen:%d",USART3_dataLen);
 				return;
 			}
 						
 			if (USART3_jsonDataCount <= USART3_dataLen)
 			{
 				USART3_jsonBuF[USART3_jsonDataCount-1] = temp;
+				//printf("\r\n7 t:%c",temp);
 				return;
 			}
 
-
+			//printf("\r\nUSART3_jsonDataCount:%d,USART3_dataLen:%d",USART3_jsonDataCount,USART3_dataLen);
+			//printf("\r\ntemp：%c",temp);
+			
 			// 末尾第一次校验标签
 			if (USART3_jsonDataCount ==(USART3_dataLen + 1))
 				{
+					//printf("\r\n8 1!!U:%d",USART3_dataLen);
 					if (temp != '*')
 						{
 							USART3StateTo0();
-							return;
+							
+							//printf("\r\n get 8!!USART3_dataLen:%d",USART3_dataLen);
 						}
+					return;
+
+					
 				}
 
 
@@ -706,29 +723,35 @@ void USART3_IRQHandler(void)                	//串口3中断服务程序
 			if (USART3_jsonDataCount ==(USART3_dataLen + 2))
 				{
 					uart3CRC = temp;
+					//printf("\r\n get 9!!");
+					return;
 				}
 
 
 			// 末尾第二次校验标签
 			if (USART3_jsonDataCount ==(USART3_dataLen + 3))
 				{
-					if (temp != '+')
+					if (temp != '&')
 					{
 						USART3StateTo0();
-						return;
+						//printf("\r\n get 10 1!!");
+						
 					}
 					else
-					{
+					{//printf("\r\n get 10!!");
 						if ( uart3CRC == crc8_calculate(USART3_jsonBuF, USART3_dataLen) )
 							{
 								memset(USART3_jsonParseBuF, 0, sizeof(USART3_jsonParseBuF));
 								strcpy(USART3_jsonParseBuF,USART3_jsonBuF);
 								PaserCar2_State();
+								//printf("\r\n get 11!!");
 							}
 						
 						USART3StateTo0();	
 						
 					}
+
+					return;
 		
 				}
 			return ;

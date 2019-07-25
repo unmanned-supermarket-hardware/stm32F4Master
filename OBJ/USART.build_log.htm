@@ -26,6 +26,38 @@ Project File Date:  07/23/2019
 
 <h2>Output:</h2>
 Build target 'USART'
+compiling main.c...
+main.c(13): warning:  #177-D: variable "num1" was declared but never referenced
+   int num1 =0;
+main.c(14): warning:  #177-D: variable "t" was declared but never referenced
+        u8 t;
+main.c(15): warning:  #177-D: variable "len" was declared but never referenced
+        u8 len; 
+main.c(16): warning:  #177-D: variable "times" was declared but never referenced
+        u16 times=0;  
+main.c: 4 warnings, 0 errors
+compiling usart.c...
+..\SYSTEM\usart\usart.c(286): warning:  #223-D: function "memset" declared implicitly
+        memset(USART2_jsonBuF, 0, sizeof(USART2_jsonBuF));
+..\SYSTEM\usart\usart.c(498): warning:  #223-D: function "memset" declared implicitly
+                                                                memset(USART2_jsonParseBuF, 0, sizeof(USART2_jsonParseBuF));
+..\SYSTEM\usart\usart.c(499): warning:  #223-D: function "strcpy" declared implicitly
+                                                                strcpy(USART2_jsonParseBuF,USART2_jsonBuF);
+..\SYSTEM\usart\usart.c(500): warning:  #223-D: function "PaserCar1_State" declared implicitly
+                                                                PaserCar1_State();
+..\SYSTEM\usart\usart.c(611): warning:  #223-D: function "memset" declared implicitly
+        memset(USART3_jsonBuF, 0, sizeof(USART3_jsonBuF));
+..\SYSTEM\usart\usart.c(744): warning:  #223-D: function "memset" declared implicitly
+                                                                memset(USART3_jsonParseBuF, 0, sizeof(USART3_jsonParseBuF));
+..\SYSTEM\usart\usart.c(745): warning:  #223-D: function "strcpy" declared implicitly
+                                                                strcpy(USART3_jsonParseBuF,USART3_jsonBuF);
+..\SYSTEM\usart\usart.c(746): warning:  #223-D: function "PaserCar2_State" declared implicitly
+                                                                PaserCar2_State();
+..\SYSTEM\usart\usart.c(841): warning:  #550-D: variable "temp" was set but never used
+        u8 temp;
+..\SYSTEM\usart\usart.c(945): warning:  #550-D: variable "temp" was set but never used
+        u8 temp;
+..\SYSTEM\usart\usart.c: 10 warnings, 0 errors
 compiling aiwacMaster.c...
 ..\AIWAC\aiwacMaster.c(31): warning:  #167-D: argument of type "u8 *" is incompatible with parameter of type "const char *"
         root = cJSON_Parse(USART2_jsonParseBuF);
@@ -43,19 +75,21 @@ compiling aiwacMaster.c...
                 strncpy(strSend+4,strJson,jsonSize);
 ..\AIWAC\aiwacMaster.c(232): warning:  #167-D: argument of type "char *" is incompatible with parameter of type "unsigned char *"
                 strSend[jsonSize+5] = crc8_calculate(strJson, jsonSize);
+..\AIWAC\aiwacMaster.c(235): warning:  #167-D: argument of type "u8 *" is incompatible with parameter of type "char *"
+                usart3_sendString(strSend,7 + jsonSize);
 ..\AIWAC\aiwacMaster.c(497): warning:  #223-D: function "delay_ms" declared implicitly
                 delay_ms(50); //   µÈ´ý×ªÍê
 ..\AIWAC\aiwacMaster.c(504): warning:  #223-D: function "delay_ms" declared implicitly
         delay_ms(1000);
-..\AIWAC\aiwacMaster.c(718): warning:  #223-D: function "delay_ms" declared implicitly
+..\AIWAC\aiwacMaster.c(720): warning:  #223-D: function "delay_ms" declared implicitly
         delay_ms(300);
-..\AIWAC\aiwacMaster.c(894): warning:  #223-D: function "delay_ms" declared implicitly
-        delay_ms(1000);
-..\AIWAC\aiwacMaster.c: 12 warnings, 0 errors
+..\AIWAC\aiwacMaster.c(896): warning:  #223-D: function "delay_ms" declared implicitly
+        delay_ms(120);
+..\AIWAC\aiwacMaster.c: 13 warnings, 0 errors
 linking...
-Program Size: Code=26210 RO-data=1486 RW-data=132 ZI-data=22444  
+Program Size: Code=26494 RO-data=1482 RW-data=132 ZI-data=20444  
 FromELF: creating hex file...
-"..\OBJ\USART.axf" - 0 Error(s), 12 Warning(s).
+"..\OBJ\USART.axf" - 0 Error(s), 27 Warning(s).
 
 <h2>Collection of Component include folders:</h2>
   C:\0MySpace\aiwac_project\nobodySuperMarcket\STM32Master\stm32F4Master\USER\RTE
