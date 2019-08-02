@@ -5,7 +5,7 @@
 <h2>Tool Versions:</h2>
 IDE-Version: μVision V5.14.0.0
 Copyright (C) 2015 ARM Ltd and ARM Germany GmbH. All rights reserved.
-License Information: 4342 AutoBVT, Microsoft, LIC=JL28T-R2FJ6-302NC-7RXIA-HIEFL-RZ5CZ
+License Information: 1 tang, 1, LIC=58574-F1BKY-00AN9-4SYB2-0CQLS-YEJYC
  
 Tool Versions:
 Toolchain:       MDK-ARM Standard  Version: 5.14.0.0
@@ -21,8 +21,8 @@ Target DLL:      STLink\ST-LINKIII-KEIL_SWO.dll V2.0.14.0_KEIL
 Dialog DLL:      TCM.DLL V1.14.4.0
  
 <h2>Project:</h2>
-D:\TY\无人超市\工程代码\master\stm32F4Master\USER\USART.uvprojx
-Project File Date:  07/18/2019
+C:\0MySpace\aiwac_project\nobodySuperMarcket\STM32Master\stm32F4Master\USER\USART.uvprojx
+Project File Date:  07/23/2019
 
 <h2>Output:</h2>
 Build target 'USART'
@@ -36,52 +36,6 @@ main.c(15): warning:  #177-D: variable "len" was declared but never referenced
 main.c(16): warning:  #177-D: variable "times" was declared but never referenced
         u16 times=0;  
 main.c: 4 warnings, 0 errors
-compiling stm32f4xx_it.c...
-compiling system_stm32f4xx.c...
-compiling led.c...
-compiling beep.c...
-compiling key.c...
-compiling delay.c...
-compiling sys.c...
-compiling usart.c...
-..\SYSTEM\usart\usart.c(286): warning:  #223-D: function "memset" declared implicitly
-        memset(USART2_jsonBuF, 0, sizeof(USART2_jsonBuF));
-..\SYSTEM\usart\usart.c(498): warning:  #223-D: function "memset" declared implicitly
-                                                                memset(USART2_jsonParseBuF, 0, sizeof(USART2_jsonParseBuF));
-..\SYSTEM\usart\usart.c(499): warning:  #223-D: function "strcpy" declared implicitly
-                                                                strcpy(USART2_jsonParseBuF,USART2_jsonBuF);
-..\SYSTEM\usart\usart.c(500): warning:  #223-D: function "PaserCar1_State" declared implicitly
-                                                                PaserCar1_State();
-..\SYSTEM\usart\usart.c(611): warning:  #223-D: function "memset" declared implicitly
-        memset(USART3_jsonBuF, 0, sizeof(USART3_jsonBuF));
-..\SYSTEM\usart\usart.c(744): warning:  #223-D: function "memset" declared implicitly
-                                                                memset(USART3_jsonParseBuF, 0, sizeof(USART3_jsonParseBuF));
-..\SYSTEM\usart\usart.c(745): warning:  #223-D: function "strcpy" declared implicitly
-                                                                strcpy(USART3_jsonParseBuF,USART3_jsonBuF);
-..\SYSTEM\usart\usart.c(746): warning:  #223-D: function "PaserCar2_State" declared implicitly
-                                                                PaserCar2_State();
-..\SYSTEM\usart\usart.c(841): warning:  #550-D: variable "temp" was set but never used
-        u8 temp;
-..\SYSTEM\usart\usart.c(945): warning:  #550-D: variable "temp" was set but never used
-        u8 temp;
-..\SYSTEM\usart\usart.c: 10 warnings, 0 errors
-assembling startup_stm32f40_41xxx.s...
-compiling misc.c...
-compiling stm32f4xx_gpio.c...
-compiling stm32f4xx_rcc.c...
-compiling stm32f4xx_syscfg.c...
-compiling stm32f4xx_usart.c...
-compiling cJSON.c...
-..\cJSON\cJSON.c(57): warning:  #1293-D: assignment in condition
-        if (!(copy = (char*)cJSON_malloc(len))) return 0;
-..\cJSON\cJSON.c(222): warning:  #1293-D: assignment in condition
-        ptr=str;while ((token=*ptr) && ++len) {if (strchr("\"\\\b\f\n\r\t",token)) len++; else if (token<32) len+=5;ptr++;}
-..\cJSON\cJSON.c(339): warning:  #1293-D: assignment in condition
-                if (!(new_item=cJSON_New_Item())) return 0;     /* memory fail */
-..\cJSON\cJSON.c(429): warning:  #1293-D: assignment in condition
-                if (!(new_item=cJSON_New_Item()))       return 0; /* memory fail */
-..\cJSON\cJSON.c: 4 warnings, 0 errors
-compiling malloc.c...
 compiling aiwacMaster.c...
 ..\AIWAC\aiwacMaster.c(33): warning:  #167-D: argument of type "u8 *" is incompatible with parameter of type "const char *"
         root = cJSON_Parse(USART2_jsonParseBuF);
@@ -113,10 +67,10 @@ compiling aiwacMaster.c...
 linking...
 Program Size: Code=28858 RO-data=1630 RW-data=148 ZI-data=20444  
 FromELF: creating hex file...
-"..\OBJ\USART.axf" - 0 Error(s), 31 Warning(s).
+"..\OBJ\USART.axf" - 0 Error(s), 17 Warning(s).
 
 <h2>Collection of Component include folders:</h2>
-  D:\TY\无人超市\工程代码\master\stm32F4Master\USER\RTE
+  C:\0MySpace\aiwac_project\nobodySuperMarcket\STM32Master\stm32F4Master\USER\RTE
   C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include
 
 <h2>Collection of Component Files used:</h2>
