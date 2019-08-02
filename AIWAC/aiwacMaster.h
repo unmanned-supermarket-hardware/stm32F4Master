@@ -31,12 +31,14 @@
 
 extern int Car1_CorrectState ;
 extern double Car1_FDistance ;
+extern double Car1_BDistance ;
 extern int Car1_moveState ;
 
 
 
 extern int Car2_CorrectState ;
 extern double Car2_FDistance ;
+extern double Car2_BDistance ;
 extern int Car2_moveState;
 
 
