@@ -47,10 +47,10 @@ int main(void)
 	
 	
 	//goStartTogether(FRONT_DIRECTION);
-	goToLocation(FRONT_DIRECTION, TURING_DISTANCE);
-	sendTuringOrder(STATE_TURN_RIGHT);
+	goToLocation(BACK_DIRECTION, TURING_DISTANCE);
+	sendTuringOrder(STATE_TURN_LEFT);
 	
-	goToLocation(FRONT_DIRECTION, 0.30);
+	goToLocation(BACK_DIRECTION, 0.3);
 
 
 	

@@ -1,5 +1,5 @@
 Dependencies for Project 'USART', Target 'USART': (DO NOT MODIFY !)
-F (.\main.c)(0x5D388A3E)(-c --cpu Cortex-M4.fp -g -O0 --apcs=interwork --split_sections -I..\CORE -I..\SYSTEM\delay -I..\SYSTEM\sys -I..\SYSTEM\usart -I..\FWLIB\STM32F4xx_StdPeriph_Driver\inc -I..\USER -I..\HARDWARE\LED -I..\HARDWARE\BEEP -I..\HARDWARE\KEY -I..\FWLIB\inc -I..\Malloc -I..\cJSON -I..\AIWAC-I C:\0MySpace\aiwac_project\nobodySuperMarcket\STM32Master\stm32F4Master\USER\RTE-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include-I C:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="514" -DSTM32F40_41xxx -DSTM32F40_41xxx -DUSE_STDPERIPH_DRIVER-o ..\obj\main.o --omf_browse ..\obj\main.crf --depend ..\obj\main.d)
+F (.\main.c)(0x5D4531D3)(-c --cpu Cortex-M4.fp -g -O0 --apcs=interwork --split_sections -I..\CORE -I..\SYSTEM\delay -I..\SYSTEM\sys -I..\SYSTEM\usart -I..\FWLIB\STM32F4xx_StdPeriph_Driver\inc -I..\USER -I..\HARDWARE\LED -I..\HARDWARE\BEEP -I..\HARDWARE\KEY -I..\FWLIB\inc -I..\Malloc -I..\cJSON -I..\AIWAC-I C:\0MySpace\aiwac_project\nobodySuperMarcket\STM32Master\stm32F4Master\USER\RTE-I C:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include-I C:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="514" -DSTM32F40_41xxx -DSTM32F40_41xxx -DUSE_STDPERIPH_DRIVER-o ..\obj\main.o --omf_browse ..\obj\main.crf --depend ..\obj\main.d)
 I (..\SYSTEM\sys\sys.h)(0x5D35B99B)
 I (..\USER\stm32f4xx.h)(0x5D35B99B)
 I (..\CORE\core_cm4.h)(0x5D35B99A)
@@ -41,7 +41,7 @@ I (C:\Keil_v5\ARM\ARMCC\include\stdio.h)(0x5475F300)
 I (..\HARDWARE\LED\led.h)(0x5D35B99A)
 I (..\HARDWARE\BEEP\beep.h)(0x5D35B99A)
 I (..\HARDWARE\KEY\key.h)(0x5D35B99A)
-I (..\AIWAC\aiwacMaster.h)(0x5D444596)
+I (..\AIWAC\aiwacMaster.h)(0x5D45317D)
 I (..\Malloc\malloc.h)(0x5D35B99A)
 I (..\cJSON\cJSON.h)(0x5D35B99B)
 I (C:\Keil_v5\ARM\ARMCC\include\stddef.h)(0x5475F300)
@@ -637,7 +637,7 @@ I (..\FWLIB\inc\stm32f4xx_dac.h)(0x5D35B99A)
 I (..\FWLIB\inc\stm32f4xx_dcmi.h)(0x5D35B99A)
 I (..\FWLIB\inc\stm32f4xx_fsmc.h)(0x5D35B99A)
 I (..\SYSTEM\sys\sys.h)(0x5D35B99B)
-I (..\AIWAC\aiwacMaster.h)(0x5D444596)
+I (..\AIWAC\aiwacMaster.h)(0x5D45317D)
 I (..\Malloc\malloc.h)(0x5D35B99A)
 I (..\cJSON\cJSON.h)(0x5D35B99B)
 I (C:\Keil_v5\ARM\ARMCC\include\stddef.h)(0x5475F300)
